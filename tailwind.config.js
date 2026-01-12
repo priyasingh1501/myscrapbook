@@ -8,8 +8,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'handwriting': ['"Kalam"', 'cursive'],
-        'nostalgic': ['"Dancing Script"', 'cursive'],
+        'handwriting': ['"Manrope"', 'sans-serif'],
+        'nostalgic': ['"Manrope"', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
