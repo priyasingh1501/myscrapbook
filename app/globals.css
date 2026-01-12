@@ -48,8 +48,9 @@ body {
 }
 
 .note-card:hover {
-  transform: translateY(-5px) rotate(1deg);
+  transform: translateY(-5px);
   box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.8);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 @keyframes fadeInUp {
@@ -104,5 +105,30 @@ body {
 
 .polaroid:nth-child(even):hover {
   transform: rotate(0deg) scale(1.05);
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-10deg) scale(1.1);
+  }
+  75% {
+    transform: rotate(10deg) scale(1.1);
+  }
+}
+
+.wiggle {
+  animation: wiggle 0.5s ease-in-out infinite;
+}
+
+.sticker {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  transition: filter 0.3s ease;
+}
+
+.sticker:hover {
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
 }
 

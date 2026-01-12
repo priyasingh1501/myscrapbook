@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
 const prompts = [
@@ -16,6 +16,8 @@ const prompts = [
   "What makes them unique?",
 ]
 
+const stickers = ['✨', '💝', '🌟', '🎉', '💖', '⭐', '🎈', '💕', '🌈', '🦋', '🌸', '💫']
+
 export default function SharePage() {
   const [formData, setFormData] = useState({
     author: '',
@@ -25,13 +27,59 @@ export default function SharePage() {
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [showPrompts, setShowPrompts] = useState(true)
+  const [showTooltip, setShowTooltip] = useState(true)
+  const [draggedSticker, setDraggedSticker] = useState<string | null>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const router = useRouter()
+
+  useEffect(() => {
+    // Hide tooltip after 5 seconds
+    const timer = setTimeout(() => {
+      setShowTooltip(false)
+    }, 5000)
+    return () => clearTimeout(timer)
+  }, [])
 
   const insertPrompt = (prompt: string) => {
     if (formData.message.trim()) {
       setFormData({ ...formData, message: formData.message + '\n\n' + prompt })
     } else {
       setFormData({ ...formData, message: prompt })
+    }
+  }
+
+  const handleDragStart = (e: React.DragEvent, sticker: string) => {
+    setDraggedSticker(sticker)
+    e.dataTransfer.effectAllowed = 'copy'
+    setShowTooltip(false)
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'copy'
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    if (draggedSticker) {
+      const textarea = textareaRef.current
+      if (textarea) {
+        const start = textarea.selectionStart
+        const end = textarea.selectionEnd
+        const text = formData.message
+        const newText = text.substring(0, start) + draggedSticker + text.substring(end)
+        setFormData({ ...formData, message: newText })
+        
+        // Set cursor position after the inserted emoji
+        setTimeout(() => {
+          textarea.focus()
+          textarea.setSelectionRange(start + draggedSticker.length, start + draggedSticker.length)
+        }, 0)
+      } else {
+        // Fallback: append to end
+        setFormData({ ...formData, message: formData.message + draggedSticker })
+      }
+      setDraggedSticker(null)
     }
   }
 
@@ -84,8 +132,48 @@ export default function SharePage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Floating Stickers */}
+      <div className="fixed inset-0 pointer-events-none z-10">
+        {stickers.map((sticker, index) => {
+          const positions = [
+            { top: '10%', left: '5%' },
+            { top: '15%', right: '8%' },
+            { top: '25%', left: '3%' },
+            { top: '30%', right: '5%' },
+            { bottom: '25%', left: '5%' },
+            { bottom: '30%', right: '8%' },
+            { bottom: '15%', left: '3%' },
+            { bottom: '20%', right: '5%' },
+            { top: '50%', left: '2%' },
+            { top: '55%', right: '3%' },
+            { bottom: '50%', left: '2%' },
+            { bottom: '55%', right: '3%' },
+          ]
+          const position = positions[index % positions.length]
+          const isFirst = index === 0
+          
+          return (
+            <div
+              key={index}
+              draggable
+              onDragStart={(e) => handleDragStart(e, sticker)}
+              className={`sticker floating absolute text-4xl md:text-5xl cursor-grab active:cursor-grabbing pointer-events-auto transition-transform hover:scale-125 ${isFirst && showTooltip ? 'wiggle' : ''}`}
+              style={position}
+            >
+              {sticker}
+              {isFirst && showTooltip && (
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 glass rounded-lg px-3 py-2 whitespace-nowrap pointer-events-none">
+                  <p className="handwriting text-white text-sm">Drag me to the note area!</p>
+                  <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-white/10"></div>
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="w-full max-w-2xl relative z-20">
         <div className="glass-strong rounded-3xl p-8 md:p-12 mb-8 text-center floating">
           <h1 className="nostalgic text-5xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg">
             Add Your Memory
@@ -163,13 +251,23 @@ export default function SharePage() {
               Your Message
             </label>
             <textarea
+              ref={textareaRef}
               id="message"
               required
               rows={8}
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              className="w-full px-6 py-4 rounded-xl bg-white/20 text-white placeholder-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 handwriting text-lg resize-none"
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              className="w-full px-6 py-4 rounded-xl bg-white/20 text-white placeholder-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 handwriting text-lg resize-none transition-all duration-200"
               placeholder="Share your thoughts, memories, or feelings here... 💝"
+              onDragEnter={(e) => {
+                e.preventDefault()
+                e.currentTarget.classList.add('border-white/50', 'bg-white/25')
+              }}
+              onDragLeave={(e) => {
+                e.currentTarget.classList.remove('border-white/50', 'bg-white/25')
+              }}
             />
           </div>
 

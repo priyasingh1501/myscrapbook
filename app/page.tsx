@@ -35,14 +35,6 @@ export default function Dashboard() {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const noteColors = [
-    'bg-gray-800',
-    'bg-gray-700',
-    'bg-gray-800',
-    'bg-gray-700',
-    'bg-gray-800',
-    'bg-gray-700',
-  ]
 
   return (
     <div className="min-h-screen p-4 md:p-8">
@@ -95,7 +87,7 @@ export default function Dashboard() {
             {notes.map((note, index) => (
               <div
                 key={note.id}
-                className={`polaroid note-card glass-strong rounded-2xl p-6 ${noteColors[index % noteColors.length]}`}
+                className="note-card glass-strong rounded-2xl p-6"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="mb-4">
