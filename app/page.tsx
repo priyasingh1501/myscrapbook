@@ -36,12 +36,12 @@ export default function Dashboard() {
   }
 
   const noteColors = [
-    'bg-yellow-50',
-    'bg-pink-50',
-    'bg-blue-50',
-    'bg-green-50',
-    'bg-purple-50',
-    'bg-orange-50',
+    'bg-gray-800',
+    'bg-gray-700',
+    'bg-gray-800',
+    'bg-gray-700',
+    'bg-gray-800',
+    'bg-gray-700',
   ]
 
   return (
@@ -100,20 +100,20 @@ export default function Dashboard() {
               >
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="nostalgic text-2xl font-bold text-gray-800">
+                    <h3 className="nostalgic text-2xl font-bold text-white">
                       {note.author}
                     </h3>
                     {note.visibleToOthers && (
-                      <span className="text-xs bg-green-200 text-green-800 px-2 py-1 rounded-full handwriting">
+                      <span className="text-xs bg-green-900 text-green-300 px-2 py-1 rounded-full handwriting">
                         Public
                       </span>
                     )}
                   </div>
-                  <p className="handwriting text-gray-700 text-base leading-relaxed whitespace-pre-wrap">
+                  <p className="handwriting text-gray-200 text-base leading-relaxed whitespace-pre-wrap">
                     {note.message}
                   </p>
                 </div>
-                <div className="text-xs text-gray-500 handwriting mt-4 pt-4 border-t border-gray-300">
+                <div className="text-xs text-gray-400 handwriting mt-4 pt-4 border-t border-gray-600">
                   {new Date(note.createdAt).toLocaleDateString('en-US', {
                     month: 'long',
                     day: 'numeric',
