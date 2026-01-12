@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { supabase } from './supabase';
 
 export interface Note {
   id: string;
@@ -9,29 +10,13 @@ export interface Note {
   color?: string;
 }
 
-// Check if we're in Vercel environment
-const isVercel = !!process.env.VERCEL;
-
-// Try to use KV, fallback to file system or in-memory
-let kvModule: any = null;
-if (isVercel) {
-  try {
-    kvModule = require('@vercel/kv');
-  } catch (e) {
-    console.log('KV not available, using fallback');
-  }
-}
-
-const NOTES_KEY = 'scrapbook:notes';
-let inMemoryNotes: Note[] = [];
-
-// File system functions (for local dev)
+// File system functions (for local dev fallback)
 let fs: any = null;
 let path: any = null;
 let dataDir: string = '';
 let dataFilePath: string = '';
 
-if (!isVercel && typeof window === 'undefined') {
+if (typeof window === 'undefined') {
   try {
     fs = require('fs');
     path = require('path');
@@ -43,23 +28,54 @@ if (!isVercel && typeof window === 'undefined') {
       fs.mkdirSync(dataDir, { recursive: true });
     }
   } catch (e) {
-    console.log('File system not available');
+    // File system not available
+  }
+}
+
+// Initialize Supabase table if using Supabase
+async function initSupabaseTable() {
+  if (!supabase) return;
+  
+  try {
+    // Create table if it doesn't exist (this will be done via SQL in Supabase dashboard)
+    // But we can check if it exists by trying to query it
+    const { error } = await supabase.from('notes').select('id').limit(1);
+    if (error && error.code === '42P01') {
+      // Table doesn't exist - user needs to create it via SQL
+      console.warn('Notes table does not exist. Please run the SQL migration in Supabase.');
+    }
+  } catch (error) {
+    console.error('Error checking Supabase table:', error);
   }
 }
 
 export async function getNotes(): Promise<Note[]> {
-  // Try Vercel KV first
-  if (isVercel && kvModule && process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+  // Try Supabase first
+  if (supabase) {
     try {
-      const { kv } = kvModule;
-      const notes = await kv.get<Note[]>(NOTES_KEY);
-      return notes || [];
+      await initSupabaseTable();
+      const { data, error } = await supabase
+        .from('notes')
+        .select('*')
+        .order('createdAt', { ascending: false });
+      
+      if (error) {
+        console.error('Error reading from Supabase:', error);
+      } else if (data) {
+        return data.map(row => ({
+          id: row.id,
+          author: row.author,
+          message: row.message,
+          visibleToOthers: row.visibleToOthers,
+          createdAt: row.createdAt,
+        }));
+      }
     } catch (error) {
-      console.error('Error reading from KV:', error);
+      console.error('Error reading from Supabase:', error);
     }
   }
   
-  // Try file system (local dev)
+  // Try file system (local dev fallback)
   if (fs && fs.existsSync && dataFilePath) {
     try {
       if (fs.existsSync(dataFilePath)) {
@@ -71,47 +87,89 @@ export async function getNotes(): Promise<Note[]> {
     }
   }
   
-  // Fallback to in-memory
-  return inMemoryNotes;
+  // Fallback to empty array
+  return [];
 }
 
 export async function saveNote(note: Omit<Note, 'id' | 'createdAt'>): Promise<Note> {
-  const notes = await getNotes();
   const newNote: Note = {
     id: uuidv4(),
     ...note,
     createdAt: new Date().toISOString(),
   };
   
-  const updatedNotes = [...notes, newNote];
-  
-  // Try Vercel KV first
-  if (isVercel && kvModule && process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+  // Try Supabase first
+  if (supabase) {
     try {
-      const { kv } = kvModule;
-      await kv.set(NOTES_KEY, updatedNotes);
+      await initSupabaseTable();
+      const { data, error } = await supabase
+        .from('notes')
+        .insert([{
+          id: newNote.id,
+          author: newNote.author,
+          message: newNote.message,
+          visibleToOthers: newNote.visibleToOthers,
+          createdAt: newNote.createdAt,
+        }])
+        .select()
+        .single();
+      
+      if (error) {
+        console.error('Error saving to Supabase:', error);
+        throw error;
+      }
+      
       return newNote;
     } catch (error) {
-      console.error('Error saving to KV:', error);
+      console.error('Error saving to Supabase:', error);
+      throw error;
     }
   }
   
-  // Try file system (local dev)
+  // Try file system (local dev fallback)
   if (fs && fs.writeFileSync && dataFilePath) {
     try {
-      fs.writeFileSync(dataFilePath, JSON.stringify(updatedNotes, null, 2));
+      const notes = await getNotes();
+      notes.push(newNote);
+      fs.writeFileSync(dataFilePath, JSON.stringify(notes, null, 2));
       return newNote;
     } catch (error) {
       console.error('Error saving to file:', error);
+      throw error;
     }
   }
   
-  // Fallback to in-memory
-  inMemoryNotes = updatedNotes;
-  return newNote;
+  throw new Error('No storage method available. Please set up Supabase or use local development.');
 }
 
 export async function getPublicNotes(): Promise<Note[]> {
+  // Try Supabase first
+  if (supabase) {
+    try {
+      await initSupabaseTable();
+      const { data, error } = await supabase
+        .from('notes')
+        .select('*')
+        .eq('visibleToOthers', true)
+        .order('createdAt', { ascending: false });
+      
+      if (error) {
+        console.error('Error reading public notes from Supabase:', error);
+      } else if (data) {
+        return data.map(row => ({
+          id: row.id,
+          author: row.author,
+          message: row.message,
+          visibleToOthers: row.visibleToOthers,
+          createdAt: row.createdAt,
+        }));
+      }
+    } catch (error) {
+      console.error('Error reading public notes from Supabase:', error);
+    }
+  }
+  
+  // Fallback to filtering all notes
   const notes = await getNotes();
   return notes.filter(note => note.visibleToOthers);
 }

@@ -27,16 +27,33 @@
 
 4. **Click "Deploy"**
 
-5. **Set up Vercel KV Database** (Important!):
-   - After deployment, go to your project dashboard
-   - Click on **"Storage"** tab
-   - Click **"Create Database"**
-   - Select **"KV"** (Redis)
-   - Create the database
-   - Vercel will automatically add these environment variables:
-     - `KV_REST_API_URL`
-     - `KV_REST_API_TOKEN`
-     - `KV_REST_API_READ_ONLY_TOKEN`
+5. **Set up Supabase Database** (Important!):
+   
+   a. **Create Supabase Account**:
+      - Go to [supabase.com](https://supabase.com)
+      - Sign up for free (or sign in)
+      - Click **"New Project"**
+      - Choose a name, database password, and region
+      - Wait for project to be created (takes ~2 minutes)
+   
+   b. **Create the Notes Table**:
+      - In your Supabase project, go to **"SQL Editor"**
+      - Click **"New Query"**
+      - Copy and paste the SQL from `supabase-setup.sql` file
+      - Click **"Run"** to execute
+   
+   c. **Get Your API Keys**:
+      - Go to **"Settings"** → **"API"**
+      - Copy your **Project URL** (this is `NEXT_PUBLIC_SUPABASE_URL`)
+      - Copy your **anon/public key** (this is `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
+   
+   d. **Add Environment Variables to Vercel**:
+      - Go back to your Vercel project dashboard
+      - Go to **"Settings"** → **"Environment Variables"**
+      - Add these two variables:
+        - `NEXT_PUBLIC_SUPABASE_URL` = (your Supabase project URL)
+        - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = (your Supabase anon key)
+      - Make sure to select all environments (Production, Preview, Development)
 
 6. **Redeploy**:
    - Go to **"Deployments"** tab
@@ -73,15 +90,20 @@ Then set up Vercel KV as described in Method 1, step 5.
 
 ## Important Notes
 
-- ✅ The app automatically uses Vercel KV when deployed (if configured)
-- ✅ Local development still uses file-based storage
-- ✅ Free tier includes 256MB KV storage and 30K operations/day
-- ✅ All notes are stored in Vercel KV in production
+- ✅ The app automatically uses Supabase when environment variables are set
+- ✅ Local development uses file-based storage (or Supabase if env vars are set)
+- ✅ Supabase free tier includes 500MB database storage
+- ✅ All notes are stored in Supabase in production
+- ✅ You need to run the SQL migration once to create the `notes` table
 
 ## Troubleshooting
 
 If notes aren't saving:
-1. Check that Vercel KV is set up in your project
-2. Verify environment variables are present in Vercel dashboard
-3. Check deployment logs for errors
+1. Check that Supabase is set up and the `notes` table exists
+2. Verify both environment variables are set in Vercel:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+3. Make sure you ran the SQL migration in Supabase SQL Editor
+4. Check Vercel deployment logs for errors
+5. Check Supabase logs in your project dashboard
 

@@ -47,10 +47,20 @@ Quick deploy:
 - React 18
 - TypeScript
 - Tailwind CSS
-- Vercel KV (production) / File-based storage (local dev)
+- Supabase (production) / File-based storage (local dev)
 
 ## Notes Storage
 
-- **Local Development**: Notes stored in `data/notes.json`
-- **Production (Vercel)**: Notes stored in Vercel KV (Redis)
+- **Local Development**: Notes stored in `data/notes.json` (or Supabase if env vars are set)
+- **Production**: Notes stored in Supabase PostgreSQL database
+
+## Supabase Setup
+
+1. Create a free account at [supabase.com](https://supabase.com)
+2. Create a new project
+3. Run the SQL migration from `supabase-setup.sql` in the SQL Editor
+4. Get your API keys from Settings → API
+5. Add environment variables to Vercel:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
