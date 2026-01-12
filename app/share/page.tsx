@@ -16,7 +16,20 @@ const prompts = [
   "What makes them unique?",
 ]
 
-const stickers = ['✨', '💝', '🌟', '🎉', '💖', '⭐', '🎈', '💕', '🌈', '🦋', '🌸', '💫']
+const stickers = [
+  { type: 'gif', url: 'https://media.giphy.com/media/26u4cqiYI50juCOGY/giphy.gif', emoji: '✨' }, // Sparkles
+  { type: 'gif', url: 'https://media.giphy.com/media/3o7aD2saQ8LDl9K2i4/giphy.gif', emoji: '💝' }, // Heart
+  { type: 'gif', url: 'https://media.giphy.com/media/26u4lOMA8JKSnL9Uk/giphy.gif', emoji: '🌟' }, // Star
+  { type: 'gif', url: 'https://media.giphy.com/media/3o7aCTPPm4OHfRLSH6/giphy.gif', emoji: '🎉' }, // Celebration
+  { type: 'gif', url: 'https://media.giphy.com/media/26u4exbQg1MqLd8iI/giphy.gif', emoji: '💖' }, // Heart eyes
+  { type: 'gif', url: 'https://media.giphy.com/media/3o7aD2saQ8LDl9K2i4/giphy.gif', emoji: '⭐' }, // Star
+  { type: 'gif', url: 'https://media.giphy.com/media/26u4cqiYI50juCOGY/giphy.gif', emoji: '🎈' }, // Balloon
+  { type: 'gif', url: 'https://media.giphy.com/media/3o7aCTPPm4OHfRLSH6/giphy.gif', emoji: '💕' }, // Hearts
+  { type: 'gif', url: 'https://media.giphy.com/media/26u4lOMA8JKSnL9Uk/giphy.gif', emoji: '🌈' }, // Rainbow
+  { type: 'gif', url: 'https://media.giphy.com/media/26u4exbQg1MqLd8iI/giphy.gif', emoji: '🦋' }, // Butterfly
+  { type: 'gif', url: 'https://media.giphy.com/media/3o7aD2saQ8LDl9K2i4/giphy.gif', emoji: '🌸' }, // Flower
+  { type: 'gif', url: 'https://media.giphy.com/media/26u4cqiYI50juCOGY/giphy.gif', emoji: '💫' }, // Dizzy star
+]
 
 export default function SharePage() {
   const [formData, setFormData] = useState({
@@ -48,8 +61,8 @@ export default function SharePage() {
     }
   }
 
-  const handleDragStart = (e: React.DragEvent, sticker: string) => {
-    setDraggedSticker(sticker)
+  const handleDragStart = (e: React.DragEvent, sticker: { type: string; url: string; emoji: string }) => {
+    setDraggedSticker(sticker.emoji)
     e.dataTransfer.effectAllowed = 'copy'
     setShowTooltip(false)
   }
@@ -158,12 +171,17 @@ export default function SharePage() {
               key={index}
               draggable
               onDragStart={(e) => handleDragStart(e, sticker)}
-              className={`sticker floating absolute text-4xl md:text-5xl cursor-grab active:cursor-grabbing pointer-events-auto transition-transform hover:scale-125 ${isFirst && showTooltip ? 'wiggle' : ''}`}
+              className={`sticker floating absolute cursor-grab active:cursor-grabbing pointer-events-auto transition-transform hover:scale-125 ${isFirst && showTooltip ? 'wiggle' : ''}`}
               style={position}
             >
-              {sticker}
+              <img
+                src={sticker.url}
+                alt={sticker.emoji}
+                className="w-16 h-16 md:w-20 md:h-20 object-contain"
+                draggable={false}
+              />
               {isFirst && showTooltip && (
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 glass rounded-lg px-3 py-2 whitespace-nowrap pointer-events-none">
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 glass rounded-lg px-3 py-2 whitespace-nowrap pointer-events-none z-50">
                   <p className="handwriting text-white text-sm">Drag me to the note area!</p>
                   <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-white/10"></div>
                 </div>
@@ -182,6 +200,70 @@ export default function SharePage() {
             Share your thoughts and feelings
           </p>
         </div>
+
+        <form onSubmit={handleSubmit} className="glass-strong rounded-3xl p-8 md:p-12 mb-6">
+          <div className="mb-6">
+            <label htmlFor="author" className="block text-white handwriting text-xl mb-3">
+              Your Name
+            </label>
+            <input
+              type="text"
+              id="author"
+              required
+              value={formData.author}
+              onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+              className="w-full px-6 py-4 rounded-xl bg-white/20 text-white placeholder-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 handwriting text-lg"
+              placeholder="Enter your name..."
+            />
+          </div>
+
+          <div className="mb-6">
+            <label htmlFor="message" className="block text-white handwriting text-xl mb-3">
+              Your Message
+            </label>
+            <textarea
+              ref={textareaRef}
+              id="message"
+              required
+              rows={8}
+              value={formData.message}
+              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              className="w-full px-6 py-4 rounded-xl bg-white/20 text-white placeholder-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 handwriting text-lg resize-none transition-all duration-200"
+              placeholder="Share your thoughts, memories, or feelings here... 💝"
+              onDragEnter={(e) => {
+                e.preventDefault()
+                e.currentTarget.classList.add('border-fuchsia-500/50', 'bg-fuchsia-500/10')
+              }}
+              onDragLeave={(e) => {
+                e.currentTarget.classList.remove('border-fuchsia-500/50', 'bg-fuchsia-500/10')
+              }}
+            />
+          </div>
+
+          <div className="mb-8">
+            <label className="flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.visibleToOthers}
+                onChange={(e) => setFormData({ ...formData, visibleToOthers: e.target.checked })}
+                className="w-5 h-5 rounded border-white/30 bg-white/20 text-fuchsia-600 focus:ring-fuchsia-500 cursor-pointer"
+              />
+              <span className="ml-3 text-white handwriting text-lg">
+                Make this note visible to everyone (otherwise only visible to the scrapbook owner)
+              </span>
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full px-8 py-4 bg-fuchsia-600/80 hover:bg-fuchsia-600 rounded-xl text-white font-bold handwriting text-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-fuchsia-500/50"
+          >
+            {submitting ? 'Adding Memory...' : 'Add to Scrapbook ✨'}
+          </button>
+        </form>
 
         {/* Prompts Section */}
         {showPrompts && (
@@ -207,7 +289,7 @@ export default function SharePage() {
                   key={index}
                   type="button"
                   onClick={() => insertPrompt(prompt)}
-                  className="glass rounded-xl p-4 text-left hover:bg-white/30 transition-all duration-300 hover:scale-105 hover:rotate-1 group"
+                  className="glass rounded-xl p-4 text-left hover:bg-fuchsia-500/20 transition-all duration-300 hover:scale-105 hover:rotate-1 group hover:border-fuchsia-500/30"
                 >
                   <p className="handwriting text-white text-sm md:text-base group-hover:text-white/90">
                     {prompt}
@@ -219,80 +301,16 @@ export default function SharePage() {
         )}
 
         {!showPrompts && (
-          <div className="mb-6 text-center">
+          <div className="text-center">
             <button
               type="button"
               onClick={() => setShowPrompts(true)}
-              className="glass rounded-xl px-6 py-3 text-white handwriting text-lg hover:bg-white/30 transition-all duration-300"
+              className="glass rounded-xl px-6 py-3 text-white handwriting text-lg hover:bg-fuchsia-500/20 hover:border-fuchsia-500/30 transition-all duration-300"
             >
               Show Writing Prompts 💡
             </button>
           </div>
         )}
-
-        <form onSubmit={handleSubmit} className="glass-strong rounded-3xl p-8 md:p-12">
-          <div className="mb-6">
-            <label htmlFor="author" className="block text-white handwriting text-xl mb-3">
-              Your Name
-            </label>
-            <input
-              type="text"
-              id="author"
-              required
-              value={formData.author}
-              onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-              className="w-full px-6 py-4 rounded-xl bg-white/20 text-white placeholder-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 handwriting text-lg"
-              placeholder="Enter your name..."
-            />
-          </div>
-
-          <div className="mb-6">
-            <label htmlFor="message" className="block text-white handwriting text-xl mb-3">
-              Your Message
-            </label>
-            <textarea
-              ref={textareaRef}
-              id="message"
-              required
-              rows={8}
-              value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
-              className="w-full px-6 py-4 rounded-xl bg-white/20 text-white placeholder-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 handwriting text-lg resize-none transition-all duration-200"
-              placeholder="Share your thoughts, memories, or feelings here... 💝"
-              onDragEnter={(e) => {
-                e.preventDefault()
-                e.currentTarget.classList.add('border-white/50', 'bg-white/25')
-              }}
-              onDragLeave={(e) => {
-                e.currentTarget.classList.remove('border-white/50', 'bg-white/25')
-              }}
-            />
-          </div>
-
-          <div className="mb-8">
-            <label className="flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.visibleToOthers}
-                onChange={(e) => setFormData({ ...formData, visibleToOthers: e.target.checked })}
-                className="w-5 h-5 rounded border-white/30 bg-white/20 text-purple-600 focus:ring-white/50 cursor-pointer"
-              />
-              <span className="ml-3 text-white handwriting text-lg">
-                Make this note visible to everyone (otherwise only visible to the scrapbook owner)
-              </span>
-            </label>
-          </div>
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full px-8 py-4 bg-white/30 hover:bg-white/40 rounded-xl text-white font-bold handwriting text-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {submitting ? 'Adding Memory...' : 'Add to Scrapbook ✨'}
-          </button>
-        </form>
       </div>
     </div>
   )
