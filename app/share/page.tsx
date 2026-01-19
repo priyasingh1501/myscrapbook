@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
 const prompts = [
@@ -16,20 +16,6 @@ const prompts = [
   "What makes them unique?",
 ]
 
-const stickers = [
-  { type: 'gif', url: 'https://media.giphy.com/media/26u4cqiYI50juCOGY/giphy.gif', emoji: '✨' }, // Sparkles
-  { type: 'gif', url: 'https://media.giphy.com/media/3o7aD2saQ8LDl9K2i4/giphy.gif', emoji: '💝' }, // Heart
-  { type: 'gif', url: 'https://media.giphy.com/media/26u4lOMA8JKSnL9Uk/giphy.gif', emoji: '🌟' }, // Star
-  { type: 'gif', url: 'https://media.giphy.com/media/3o7aCTPPm4OHfRLSH6/giphy.gif', emoji: '🎉' }, // Celebration
-  { type: 'gif', url: 'https://media.giphy.com/media/26u4exbQg1MqLd8iI/giphy.gif', emoji: '💖' }, // Heart eyes
-  { type: 'gif', url: 'https://media.giphy.com/media/3o7aD2saQ8LDl9K2i4/giphy.gif', emoji: '⭐' }, // Star
-  { type: 'gif', url: 'https://media.giphy.com/media/26u4cqiYI50juCOGY/giphy.gif', emoji: '🎈' }, // Balloon
-  { type: 'gif', url: 'https://media.giphy.com/media/3o7aCTPPm4OHfRLSH6/giphy.gif', emoji: '💕' }, // Hearts
-  { type: 'gif', url: 'https://media.giphy.com/media/26u4lOMA8JKSnL9Uk/giphy.gif', emoji: '🌈' }, // Rainbow
-  { type: 'gif', url: 'https://media.giphy.com/media/26u4exbQg1MqLd8iI/giphy.gif', emoji: '🦋' }, // Butterfly
-  { type: 'gif', url: 'https://media.giphy.com/media/3o7aD2saQ8LDl9K2i4/giphy.gif', emoji: '🌸' }, // Flower
-  { type: 'gif', url: 'https://media.giphy.com/media/26u4cqiYI50juCOGY/giphy.gif', emoji: '💫' }, // Dizzy star
-]
 
 export default function SharePage() {
   const [formData, setFormData] = useState({
@@ -40,18 +26,8 @@ export default function SharePage() {
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [showPrompts, setShowPrompts] = useState(true)
-  const [showTooltip, setShowTooltip] = useState(true)
-  const [draggedSticker, setDraggedSticker] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const router = useRouter()
-
-  useEffect(() => {
-    // Hide tooltip after 5 seconds
-    const timer = setTimeout(() => {
-      setShowTooltip(false)
-    }, 5000)
-    return () => clearTimeout(timer)
-  }, [])
 
   const insertPrompt = (prompt: string) => {
     if (formData.message.trim()) {
@@ -61,40 +37,6 @@ export default function SharePage() {
     }
   }
 
-  const handleDragStart = (e: React.DragEvent, sticker: { type: string; url: string; emoji: string }) => {
-    setDraggedSticker(sticker.emoji)
-    e.dataTransfer.effectAllowed = 'copy'
-    setShowTooltip(false)
-  }
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = 'copy'
-  }
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    if (draggedSticker) {
-      const textarea = textareaRef.current
-      if (textarea) {
-        const start = textarea.selectionStart
-        const end = textarea.selectionEnd
-        const text = formData.message
-        const newText = text.substring(0, start) + draggedSticker + text.substring(end)
-        setFormData({ ...formData, message: newText })
-        
-        // Set cursor position after the inserted emoji
-        setTimeout(() => {
-          textarea.focus()
-          textarea.setSelectionRange(start + draggedSticker.length, start + draggedSticker.length)
-        }, 0)
-      } else {
-        // Fallback: append to end
-        setFormData({ ...formData, message: formData.message + draggedSticker })
-      }
-      setDraggedSticker(null)
-    }
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -148,51 +90,6 @@ export default function SharePage() {
     <div className="min-h-screen relative overflow-hidden scrapbook-bg">
       {/* Kraft Paper Background */}
       <div className="fixed inset-0 kraft-paper"></div>
-      
-      {/* Floating Stickers */}
-      <div className="fixed inset-0 pointer-events-none z-10">
-        {stickers.map((sticker, index) => {
-          const positions = [
-            { top: '10%', left: '5%' },
-            { top: '15%', right: '8%' },
-            { top: '25%', left: '3%' },
-            { top: '30%', right: '5%' },
-            { bottom: '25%', left: '5%' },
-            { bottom: '30%', right: '8%' },
-            { bottom: '15%', left: '3%' },
-            { bottom: '20%', right: '5%' },
-            { top: '50%', left: '2%' },
-            { top: '55%', right: '3%' },
-            { bottom: '50%', left: '2%' },
-            { bottom: '55%', right: '3%' },
-          ]
-          const position = positions[index % positions.length]
-          const isFirst = index === 0
-          
-          return (
-            <div
-              key={index}
-              draggable
-              onDragStart={(e) => handleDragStart(e, sticker)}
-              className={`sticker floating absolute cursor-grab active:cursor-grabbing pointer-events-auto transition-transform hover:scale-125 ${isFirst && showTooltip ? 'wiggle' : ''}`}
-              style={position}
-            >
-              <img
-                src={sticker.url}
-                alt={sticker.emoji}
-                className="w-16 h-16 md:w-20 md:h-20 object-contain"
-                draggable={false}
-              />
-              {isFirst && showTooltip && (
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-white/95 border border-gray-300 rounded-lg px-3 py-2 whitespace-nowrap pointer-events-none z-50 shadow-lg">
-                  <p className="handwriting text-gray-800 text-sm font-semibold">Drag me to the note area!</p>
-                  <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-white"></div>
-                </div>
-              )}
-            </div>
-          )
-        })}
-      </div>
 
       <div className="relative z-20 min-h-screen flex flex-col items-center py-8 px-4">
         {/* Banner */}
@@ -204,14 +101,16 @@ export default function SharePage() {
           </div>
         </div>
 
-        {/* Note Area with Tape */}
-        <div className="scrapbook-note-container relative max-w-3xl w-full mb-8">
-          {/* Tape decorations */}
-          <div className="tape tape-top-left"></div>
-          <div className="tape tape-bottom-right"></div>
-          
-          {/* Note Area */}
-          <form onSubmit={handleSubmit} className="scrapbook-note-area p-8 md:p-12">
+        {/* Main Content Area */}
+        <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-6 items-start">
+          {/* Note Area with Tape */}
+          <div className="scrapbook-note-container relative flex-1 w-full lg:max-w-2xl">
+            {/* Tape decorations */}
+            <div className="tape tape-top-left"></div>
+            <div className="tape tape-bottom-right"></div>
+            
+            {/* Note Area */}
+            <form onSubmit={handleSubmit} className="scrapbook-note-area p-8 md:p-12">
             <div className="mb-6">
               <label htmlFor="author" className="block text-gray-800 handwriting text-lg mb-2 font-semibold">
                 Your Name
@@ -238,17 +137,8 @@ export default function SharePage() {
                 rows={12}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                onDragOver={handleDragOver}
-                onDrop={handleDrop}
                 className="w-full px-4 py-3 rounded-lg bg-white/80 text-gray-800 placeholder-gray-400 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 handwriting text-base resize-none transition-all duration-200 min-h-[300px]"
                 placeholder="Write your thoughts, memories, or feelings here... 💝"
-                onDragEnter={(e) => {
-                  e.preventDefault()
-                  e.currentTarget.classList.add('border-fuchsia-500', 'bg-fuchsia-50')
-                }}
-                onDragLeave={(e) => {
-                  e.currentTarget.classList.remove('border-fuchsia-500', 'bg-fuchsia-50')
-                }}
               />
             </div>
 
@@ -274,54 +164,54 @@ export default function SharePage() {
               {submitting ? 'Adding Memory...' : 'Add to Scrapbook ✨'}
             </button>
           </form>
-        </div>
+          </div>
 
-        {/* Prompts Section */}
-        {showPrompts && (
-          <div className="scrapbook-note-area p-6 md:p-8 mb-6 max-w-3xl w-full">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="nostalgic text-2xl md:text-3xl font-bold text-gray-800">
-                Need Inspiration? 💭
-              </h2>
+          {/* Floating Prompts Section */}
+          {showPrompts && (
+            <div className="floating-prompts glassmorphic-sidebar p-6 w-full lg:w-80 lg:sticky lg:top-8">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="nostalgic text-xl md:text-2xl font-bold text-gray-800">
+                  Need Inspiration? 💭
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => setShowPrompts(false)}
+                  className="text-gray-600 hover:text-gray-800 handwriting text-sm font-semibold"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="space-y-2">
+                {prompts.map((prompt, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => insertPrompt(prompt)}
+                    className="w-full bg-white/30 hover:bg-white/40 backdrop-blur-sm border border-white/20 hover:border-fuchsia-300/50 rounded-lg p-3 text-left transition-all duration-300 hover:scale-105 group shadow-sm"
+                  >
+                    <p className="handwriting text-gray-800 text-sm group-hover:text-fuchsia-700 font-medium">
+                      {prompt}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {!showPrompts && (
+            <div className="w-full lg:w-80 lg:sticky lg:top-8">
               <button
                 type="button"
-                onClick={() => setShowPrompts(false)}
-                className="text-gray-600 hover:text-gray-800 handwriting text-base font-semibold"
+                onClick={() => setShowPrompts(true)}
+                className="w-full glassmorphic-sidebar p-4 text-center hover:bg-white/20 transition-all duration-300"
               >
-                Hide
+                <span className="handwriting text-gray-800 text-base font-semibold hover:text-fuchsia-700">
+                  Show Writing Prompts 💡
+                </span>
               </button>
             </div>
-            <p className="handwriting text-gray-700 mb-4 text-base">
-              Click on any prompt below to get started or use them as inspiration:
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {prompts.map((prompt, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={() => insertPrompt(prompt)}
-                  className="bg-white/60 hover:bg-fuchsia-50 border border-gray-300 hover:border-fuchsia-300 rounded-lg p-4 text-left transition-all duration-300 hover:scale-105 hover:rotate-1 group"
-                >
-                  <p className="handwriting text-gray-800 text-sm md:text-base group-hover:text-fuchsia-700">
-                    {prompt}
-                  </p>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {!showPrompts && (
-          <div className="text-center mb-6">
-            <button
-              type="button"
-              onClick={() => setShowPrompts(true)}
-              className="bg-white/80 hover:bg-white border border-gray-300 hover:border-fuchsia-500 rounded-lg px-6 py-3 text-gray-800 handwriting text-base font-semibold hover:text-fuchsia-700 transition-all duration-300 shadow-md"
-            >
-              Show Writing Prompts 💡
-            </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )

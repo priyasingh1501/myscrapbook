@@ -181,13 +181,14 @@ body {
 }
 
 .scrapbook-note-area {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    0 8px 32px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
   min-height: 500px;
   position: relative;
   z-index: 1;
@@ -255,5 +256,39 @@ body {
   bottom: -2px;
   background: linear-gradient(135deg, transparent 30%, rgba(0, 0, 0, 0.1) 50%, transparent 70%);
   border-radius: 2px;
+}
+
+.floating-prompts {
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+}
+
+.floating-prompts::-webkit-scrollbar {
+  width: 6px;
+}
+
+.floating-prompts::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+.floating-prompts::-webkit-scrollbar-thumb {
+  background: rgba(217, 70, 239, 0.3);
+  border-radius: 3px;
+}
+
+.floating-prompts::-webkit-scrollbar-thumb:hover {
+  background: rgba(217, 70, 239, 0.5);
+}
+
+.glassmorphic-sidebar {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
 }
 
