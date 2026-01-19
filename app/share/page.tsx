@@ -87,30 +87,27 @@ export default function SharePage() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden scrapbook-bg">
-      {/* Kraft Paper Background */}
-      <div className="fixed inset-0 kraft-paper"></div>
-
-      <div className="relative z-20 min-h-screen flex flex-col items-center py-8 px-4">
-        {/* Banner */}
-        <div className="mb-8 mt-4">
-          <div className="scrapbook-banner px-8 py-3">
-            <h1 className="nostalgic text-2xl md:text-3xl font-bold text-white uppercase tracking-wider">
-              Making Your Scrapbook
-            </h1>
-          </div>
-        </div>
-
-        {/* Main Content Area */}
-        <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-6 items-start">
-          {/* Note Area with Tape */}
-          <div className="scrapbook-note-container relative flex-1 w-full lg:max-w-2xl">
-            {/* Tape decorations */}
-            <div className="tape tape-top-left"></div>
-            <div className="tape tape-bottom-right"></div>
-            
-            {/* Note Area */}
-            <form onSubmit={handleSubmit} className="scrapbook-note-area p-8 md:p-12">
+    <div className="min-h-screen relative overflow-hidden book-background">
+      {/* Book Container */}
+      <div className="relative z-20 min-h-screen flex items-center justify-center py-8 px-4">
+        <div className="book-container">
+          {/* Left Page - Note Area */}
+          <div className="book-page book-page-left">
+            <div className="page-content">
+              <div className="page-header mb-6">
+                <h1 className="nostalgic text-3xl md:text-4xl font-bold text-gray-800 uppercase tracking-wider text-center">
+                  Making Your Scrapbook
+                </h1>
+              </div>
+              
+              {/* Note Area with Tape */}
+              <div className="scrapbook-note-container relative">
+                {/* Tape decorations */}
+                <div className="tape tape-top-left"></div>
+                <div className="tape tape-bottom-right"></div>
+                
+                {/* Note Area */}
+                <form onSubmit={handleSubmit} className="scrapbook-note-area p-6 md:p-8">
             <div className="mb-6">
               <label htmlFor="author" className="block text-gray-800 handwriting text-lg mb-2 font-semibold">
                 Your Name
@@ -164,53 +161,63 @@ export default function SharePage() {
               {submitting ? 'Adding Memory...' : 'Add to Scrapbook ✨'}
             </button>
           </form>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Floating Prompts Section */}
-          {showPrompts && (
-            <div className="floating-prompts glassmorphic-sidebar p-6 w-full lg:w-80 lg:sticky lg:top-8">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="nostalgic text-xl md:text-2xl font-bold text-gray-800">
-                  Need Inspiration? 💭
-                </h2>
-                <button
-                  type="button"
-                  onClick={() => setShowPrompts(false)}
-                  className="text-gray-600 hover:text-gray-800 handwriting text-sm font-semibold"
-                >
-                  ✕
-                </button>
-              </div>
-              <div className="space-y-2">
-                {prompts.map((prompt, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    onClick={() => insertPrompt(prompt)}
-                    className="w-full bg-white/30 hover:bg-white/40 backdrop-blur-sm border border-white/20 hover:border-fuchsia-300/50 rounded-lg p-3 text-left transition-all duration-300 hover:scale-105 group shadow-sm"
-                  >
-                    <p className="handwriting text-gray-800 text-sm group-hover:text-fuchsia-700 font-medium">
-                      {prompt}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Book Spine */}
+          <div className="book-spine"></div>
 
-          {!showPrompts && (
-            <div className="w-full lg:w-80 lg:sticky lg:top-8">
-              <button
-                type="button"
-                onClick={() => setShowPrompts(true)}
-                className="w-full glassmorphic-sidebar p-4 text-center hover:bg-white/20 transition-all duration-300"
-              >
-                <span className="handwriting text-gray-800 text-base font-semibold hover:text-fuchsia-700">
-                  Show Writing Prompts 💡
-                </span>
-              </button>
+          {/* Right Page - Prompts */}
+          <div className="book-page book-page-right">
+            <div className="page-content">
+              {showPrompts ? (
+                <>
+                  <div className="page-header mb-6">
+                    <div className="flex items-center justify-between">
+                      <h2 className="nostalgic text-2xl md:text-3xl font-bold text-gray-800">
+                        Need Inspiration? 💭
+                      </h2>
+                      <button
+                        type="button"
+                        onClick={() => setShowPrompts(false)}
+                        className="text-gray-600 hover:text-gray-800 handwriting text-sm font-semibold"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    {prompts.map((prompt, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => insertPrompt(prompt)}
+                        className="w-full bg-white/40 hover:bg-white/60 backdrop-blur-sm border border-gray-200 hover:border-fuchsia-300 rounded-lg p-4 text-left transition-all duration-300 hover:scale-105 group shadow-sm"
+                      >
+                        <p className="handwriting text-gray-800 text-sm group-hover:text-fuchsia-700 font-medium">
+                          {prompt}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-center justify-center h-full min-h-[400px]">
+                  <button
+                    type="button"
+                    onClick={() => setShowPrompts(true)}
+                    className="bg-white/40 hover:bg-white/60 backdrop-blur-sm border border-gray-200 hover:border-fuchsia-300 rounded-lg px-8 py-4 text-center transition-all duration-300 shadow-sm"
+                  >
+                    <span className="handwriting text-gray-800 text-lg font-semibold hover:text-fuchsia-700">
+                      Show Writing Prompts 💡
+                    </span>
+                  </button>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
