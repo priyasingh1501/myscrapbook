@@ -100,6 +100,13 @@ export default function SharePage() {
           {/* Left Page - Message */}
           <div className="book-page book-page-left">
             <div className="page-content">
+              {/* Heading */}
+              <div className="mb-6">
+                <h1 className="nostalgic text-4xl md:text-5xl font-bold text-gray-800 text-center">
+                  A chapter I'll always carry
+                </h1>
+              </div>
+              
               {/* Thank You GIF */}
               <div className="flex justify-center mb-6" style={{ minHeight: '128px' }}>
                 <img 
@@ -157,9 +164,6 @@ export default function SharePage() {
                   </div>
                   
                   <div className="mb-4">
-                    <label htmlFor="author" className="block text-gray-700 handwriting text-base mb-2">
-                      Your Name
-                    </label>
                     <input
                       type="text"
                       id="author"
@@ -167,14 +171,18 @@ export default function SharePage() {
                       value={formData.author}
                       onChange={(e) => setFormData({ ...formData, author: e.target.value })}
                       className="w-full px-3 py-2 bg-transparent text-gray-800 placeholder-gray-500 border-b-2 border-gray-300 focus:outline-none focus:border-amber-700 handwriting text-lg"
-                      placeholder="Sign your name here..."
+                      placeholder="Let me know who you are"
                     />
                   </div>
                   
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full px-6 py-3 bg-amber-700 hover:bg-amber-800 rounded-lg text-white font-bold handwriting text-base transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+                    className="w-full px-6 py-3 rounded-lg text-white font-bold handwriting text-base transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+                    style={{ 
+                      background: 'linear-gradient(to bottom, #87CEEB 0%, #98D8E8 50%, #B0E0E6 100%)',
+                      border: '1px solid rgba(135, 206, 235, 0.5)'
+                    }}
                   >
                     {submitting ? 'Adding Memory...' : 'Add to Scrapbook ✨'}
                   </button>
