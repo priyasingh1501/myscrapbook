@@ -145,7 +145,10 @@ export default function SharePage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden scrapbook-bg">
+      {/* Kraft Paper Background */}
+      <div className="fixed inset-0 kraft-paper"></div>
+      
       {/* Floating Stickers */}
       <div className="fixed inset-0 pointer-events-none z-10">
         {stickers.map((sticker, index) => {
@@ -181,9 +184,9 @@ export default function SharePage() {
                 draggable={false}
               />
               {isFirst && showTooltip && (
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 glass rounded-lg px-3 py-2 whitespace-nowrap pointer-events-none z-50">
-                  <p className="handwriting text-white text-sm">Drag me to the note area!</p>
-                  <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-white/10"></div>
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-white/95 border border-gray-300 rounded-lg px-3 py-2 whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                  <p className="handwriting text-gray-800 text-sm font-semibold">Drag me to the note area!</p>
+                  <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-white"></div>
                 </div>
               )}
             </div>
@@ -191,96 +194,104 @@ export default function SharePage() {
         })}
       </div>
 
-      <div className="w-full max-w-2xl relative z-20">
-        <div className="glass-strong rounded-3xl p-8 md:p-12 mb-8 text-center floating">
-          <h1 className="nostalgic text-5xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg">
-            Add Your Memory
-          </h1>
-          <p className="handwriting text-xl text-white/90">
-            Share your thoughts and feelings
-          </p>
+      <div className="relative z-20 min-h-screen flex flex-col items-center py-8 px-4">
+        {/* Banner */}
+        <div className="mb-8 mt-4">
+          <div className="scrapbook-banner px-8 py-3">
+            <h1 className="nostalgic text-2xl md:text-3xl font-bold text-white uppercase tracking-wider">
+              Making Your Scrapbook
+            </h1>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="glass-strong rounded-3xl p-8 md:p-12 mb-6">
-          <div className="mb-6">
-            <label htmlFor="author" className="block text-white handwriting text-xl mb-3">
-              Your Name
-            </label>
-            <input
-              type="text"
-              id="author"
-              required
-              value={formData.author}
-              onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-              className="w-full px-6 py-4 rounded-xl bg-white/20 text-white placeholder-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 handwriting text-lg"
-              placeholder="Enter your name..."
-            />
-          </div>
-
-          <div className="mb-6">
-            <label htmlFor="message" className="block text-white handwriting text-xl mb-3">
-              Your Message
-            </label>
-            <textarea
-              ref={textareaRef}
-              id="message"
-              required
-              rows={8}
-              value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
-              className="w-full px-6 py-4 rounded-xl bg-white/20 text-white placeholder-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 handwriting text-lg resize-none transition-all duration-200"
-              placeholder="Share your thoughts, memories, or feelings here... 💝"
-              onDragEnter={(e) => {
-                e.preventDefault()
-                e.currentTarget.classList.add('border-fuchsia-500/50', 'bg-fuchsia-500/10')
-              }}
-              onDragLeave={(e) => {
-                e.currentTarget.classList.remove('border-fuchsia-500/50', 'bg-fuchsia-500/10')
-              }}
-            />
-          </div>
-
-          <div className="mb-8">
-            <label className="flex items-center cursor-pointer">
+        {/* Note Area with Tape */}
+        <div className="scrapbook-note-container relative max-w-3xl w-full mb-8">
+          {/* Tape decorations */}
+          <div className="tape tape-top-left"></div>
+          <div className="tape tape-bottom-right"></div>
+          
+          {/* Note Area */}
+          <form onSubmit={handleSubmit} className="scrapbook-note-area p-8 md:p-12">
+            <div className="mb-6">
+              <label htmlFor="author" className="block text-gray-800 handwriting text-lg mb-2 font-semibold">
+                Your Name
+              </label>
               <input
-                type="checkbox"
-                checked={formData.visibleToOthers}
-                onChange={(e) => setFormData({ ...formData, visibleToOthers: e.target.checked })}
-                className="w-5 h-5 rounded border-white/30 bg-white/20 text-fuchsia-600 focus:ring-fuchsia-500 cursor-pointer"
+                type="text"
+                id="author"
+                required
+                value={formData.author}
+                onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                className="w-full px-4 py-3 rounded-lg bg-white/80 text-gray-800 placeholder-gray-400 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 handwriting text-base"
+                placeholder="Enter your name..."
               />
-              <span className="ml-3 text-white handwriting text-lg">
-                Make this note visible to everyone (otherwise only visible to the scrapbook owner)
-              </span>
-            </label>
-          </div>
+            </div>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full px-8 py-4 bg-fuchsia-600/80 hover:bg-fuchsia-600 rounded-xl text-white font-bold handwriting text-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-fuchsia-500/50"
-          >
-            {submitting ? 'Adding Memory...' : 'Add to Scrapbook ✨'}
-          </button>
-        </form>
+            <div className="mb-6">
+              <label htmlFor="message" className="block text-gray-800 handwriting text-lg mb-2 font-semibold">
+                Your Message
+              </label>
+              <textarea
+                ref={textareaRef}
+                id="message"
+                required
+                rows={12}
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                className="w-full px-4 py-3 rounded-lg bg-white/80 text-gray-800 placeholder-gray-400 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 handwriting text-base resize-none transition-all duration-200 min-h-[300px]"
+                placeholder="Write your thoughts, memories, or feelings here... 💝"
+                onDragEnter={(e) => {
+                  e.preventDefault()
+                  e.currentTarget.classList.add('border-fuchsia-500', 'bg-fuchsia-50')
+                }}
+                onDragLeave={(e) => {
+                  e.currentTarget.classList.remove('border-fuchsia-500', 'bg-fuchsia-50')
+                }}
+              />
+            </div>
+
+            <div className="mb-6">
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.visibleToOthers}
+                  onChange={(e) => setFormData({ ...formData, visibleToOthers: e.target.checked })}
+                  className="w-5 h-5 rounded border-gray-400 bg-white text-fuchsia-600 focus:ring-fuchsia-500 cursor-pointer"
+                />
+                <span className="ml-3 text-gray-700 handwriting text-base">
+                  Make this note visible to everyone (otherwise only visible to the scrapbook owner)
+                </span>
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full px-8 py-4 bg-fuchsia-600 hover:bg-fuchsia-700 rounded-lg text-white font-bold handwriting text-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-fuchsia-500/50"
+            >
+              {submitting ? 'Adding Memory...' : 'Add to Scrapbook ✨'}
+            </button>
+          </form>
+        </div>
 
         {/* Prompts Section */}
         {showPrompts && (
-          <div className="glass-strong rounded-3xl p-6 md:p-8 mb-6">
+          <div className="scrapbook-note-area p-6 md:p-8 mb-6 max-w-3xl w-full">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="nostalgic text-3xl font-bold text-white">
+              <h2 className="nostalgic text-2xl md:text-3xl font-bold text-gray-800">
                 Need Inspiration? 💭
               </h2>
               <button
                 type="button"
                 onClick={() => setShowPrompts(false)}
-                className="text-white/80 hover:text-white handwriting text-lg"
+                className="text-gray-600 hover:text-gray-800 handwriting text-base font-semibold"
               >
                 Hide
               </button>
             </div>
-            <p className="handwriting text-white/90 mb-4 text-lg">
+            <p className="handwriting text-gray-700 mb-4 text-base">
               Click on any prompt below to get started or use them as inspiration:
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -289,9 +300,9 @@ export default function SharePage() {
                   key={index}
                   type="button"
                   onClick={() => insertPrompt(prompt)}
-                  className="glass rounded-xl p-4 text-left hover:bg-fuchsia-500/20 transition-all duration-300 hover:scale-105 hover:rotate-1 group hover:border-fuchsia-500/30"
+                  className="bg-white/60 hover:bg-fuchsia-50 border border-gray-300 hover:border-fuchsia-300 rounded-lg p-4 text-left transition-all duration-300 hover:scale-105 hover:rotate-1 group"
                 >
-                  <p className="handwriting text-white text-sm md:text-base group-hover:text-white/90">
+                  <p className="handwriting text-gray-800 text-sm md:text-base group-hover:text-fuchsia-700">
                     {prompt}
                   </p>
                 </button>
@@ -301,11 +312,11 @@ export default function SharePage() {
         )}
 
         {!showPrompts && (
-          <div className="text-center">
+          <div className="text-center mb-6">
             <button
               type="button"
               onClick={() => setShowPrompts(true)}
-              className="glass rounded-xl px-6 py-3 text-white handwriting text-lg hover:bg-fuchsia-500/20 hover:border-fuchsia-500/30 transition-all duration-300"
+              className="bg-white/80 hover:bg-white border border-gray-300 hover:border-fuchsia-500 rounded-lg px-6 py-3 text-gray-800 handwriting text-base font-semibold hover:text-fuchsia-700 transition-all duration-300 shadow-md"
             >
               Show Writing Prompts 💡
             </button>
