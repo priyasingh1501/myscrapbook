@@ -7,9 +7,9 @@
 :root {
   --glass-bg: rgba(255, 255, 255, 0.1);
   --glass-border: rgba(255, 255, 255, 0.2);
-  --accent-color: #d946ef;
-  --accent-color-dark: #a21caf;
-  --accent-color-light: #f0abfc;
+  --accent-color: #b45309;
+  --accent-color-dark: #92400e;
+  --accent-color-light: #fbbf24;
 }
 
 * {

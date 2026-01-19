@@ -56,11 +56,11 @@ export default function Dashboard() {
                 type="text"
                 value={shareLink}
                 readOnly
-                className="flex-1 px-4 py-3 rounded-xl bg-white/20 text-white placeholder-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 handwriting"
+                className="flex-1 px-4 py-3 rounded-xl bg-white/20 text-white placeholder-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-amber-600 handwriting"
               />
               <button
                 onClick={copyToClipboard}
-                className="px-6 py-3 bg-fuchsia-600/80 hover:bg-fuchsia-600 rounded-xl text-white font-bold handwriting transition-all duration-300 hover:scale-105 flex items-center gap-2 shadow-lg shadow-fuchsia-500/50"
+                className="px-6 py-3 bg-amber-700/80 hover:bg-amber-700 rounded-xl text-white font-bold handwriting transition-all duration-300 hover:scale-105 flex items-center gap-2 shadow-lg shadow-amber-600/50"
               >
                 {copied ? (
                   <>
@@ -91,15 +91,10 @@ export default function Dashboard() {
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="mb-4">
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="mb-2">
                     <h3 className="nostalgic text-2xl font-bold text-white">
                       {note.author}
                     </h3>
-                    {note.visibleToOthers && (
-                      <span className="text-xs bg-fuchsia-900 text-fuchsia-300 px-2 py-1 rounded-full handwriting">
-                        Public
-                      </span>
-                    )}
                   </div>
                   <p className="handwriting text-gray-200 text-base leading-relaxed whitespace-pre-wrap">
                     {note.message}

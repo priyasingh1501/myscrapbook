@@ -3,12 +3,8 @@ import { getNotes, saveNote, getPublicNotes, Note } from '@/lib/db'
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams
-    const viewMode = searchParams.get('view')
-    
-    // If view=public, return only public notes
-    // Otherwise, return all notes (for dashboard owner)
-    const notes = viewMode === 'public' ? await getPublicNotes() : await getNotes()
+    // Return all notes - all notes are visible on dashboard
+    const notes = await getNotes()
     
     return NextResponse.json(notes)
   } catch (error) {
@@ -23,7 +19,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { author, message, visibleToOthers } = body
+    const { author, message } = body
 
     if (!author || !message) {
       return NextResponse.json(
@@ -32,10 +28,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // All notes are visible on dashboard
     const note = await saveNote({
       author: author.trim(),
       message: message.trim(),
-      visibleToOthers: visibleToOthers || false,
+      visibleToOthers: true,
     })
 
     return NextResponse.json(note, { status: 201 })
