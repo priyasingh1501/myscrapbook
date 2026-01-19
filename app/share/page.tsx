@@ -30,6 +30,7 @@ export default function SharePage() {
   const [showRightPage, setShowRightPage] = useState(false)
   const [animatedText, setAnimatedText] = useState('')
   const [isAnimating, setIsAnimating] = useState(true)
+  const [musicStarted, setMusicStarted] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
   const router = useRouter()
@@ -38,7 +39,7 @@ export default function SharePage() {
 
 Tekion has been a very special chapter of my life. When I joined, I was just a bud — a self-taught designer, only a couple of years into this new design world, full of passion and eager to prove myself and create impact through my work.
 
-Over the years, this place taught me exactly that. From working on some amazing projects — including the SO Revamp, which was interestingly my very first project here — to learning through challenges and collaboration, I've grown not just as a designer, but as a mentor, a teammate, and a collaborator.
+Over the years, this place taught me how growth takes time. From working on some amazing projects — including the SO Revamp, which was interestingly my very first project here — to learning through challenges and collaboration, I've grown not just as a designer, but as a mentor, a teammate, and a collaborator.
 
 The design team has always been very close to my heart, especially Fixed Ops. And while I spent most of my time with product teams, I'm deeply grateful to you all as well — the backbone of any product, often doing the most thankless work. You are incredible leaders, and I've learned so much from you.
 
@@ -46,17 +47,23 @@ And of course, thank you to the real makers — our engineers — who brought my
 
 I'll always cherish the beautiful moments, the laughter, and the people who made this journey so meaningful. Thank you for making my time at Tekion truly wonderful.
 
+If you'd like, I'd truly love to hear a few thoughts or memories from you as well — I'm putting together a small farewell scrapbook to carry this chapter with me.
+
 Love,
 Priya`
 
-  useEffect(() => {
-    // Start background music
-    if (audioRef.current) {
-      audioRef.current.play().catch(err => {
-        console.log('Audio autoplay prevented:', err)
-      })
+  const startMusic = async () => {
+    if (audioRef.current && !musicStarted) {
+      try {
+        await audioRef.current.play()
+        setMusicStarted(true)
+      } catch (err) {
+        console.log('Audio play failed:', err)
+      }
     }
+  }
 
+  useEffect(() => {
     // Word-by-word animation
     if (isAnimating) {
       const words = fullText.split(' ')
@@ -76,7 +83,31 @@ Priya`
     }
   }, [isAnimating, fullText])
 
+  // Try to start music on any user interaction
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      startMusic()
+      // Remove listeners after first interaction
+      document.removeEventListener('click', handleUserInteraction)
+      document.removeEventListener('touchstart', handleUserInteraction)
+      document.removeEventListener('keydown', handleUserInteraction)
+    }
+
+    document.addEventListener('click', handleUserInteraction)
+    document.addEventListener('touchstart', handleUserInteraction)
+    document.addEventListener('keydown', handleUserInteraction)
+
+    return () => {
+      document.removeEventListener('click', handleUserInteraction)
+      document.removeEventListener('touchstart', handleUserInteraction)
+      document.removeEventListener('keydown', handleUserInteraction)
+    }
+  }, [musicStarted])
+
   const handleFlipPage = () => {
+    // Start music if not already started
+    startMusic()
+    // Start the flip animation
     setShowRightPage(true)
   }
 
@@ -209,11 +240,11 @@ Priya`
           {/* Right Page - Writing Area */}
           {showRightPage && (
             <div className="book-page book-page-right show">
-              <div className="page-content">
-                <form onSubmit={handleSubmit} className="h-full flex flex-col">
+              <div className="page-content" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <form onSubmit={handleSubmit} className="flex-1 flex flex-col" style={{ minHeight: 0 }}>
                 {/* Transparent Writing Area */}
-                <div className="flex-1 flex flex-col">
-                  <div className="flex-1 mb-4">
+                <div className="flex-1 flex flex-col" style={{ minHeight: 0 }}>
+                  <div className="flex-1 mb-4" style={{ minHeight: 0 }}>
                     <textarea
                       ref={textareaRef}
                       id="message"
@@ -221,6 +252,7 @@ Priya`
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       className="w-full h-full px-3 py-2 bg-transparent text-gray-800 placeholder-gray-400 focus:outline-none handwriting text-lg resize-none leading-relaxed"
+                      style={{ minHeight: '400px' }}
                       placeholder="I'm making a farewell scrapbook and I'd really value a note from you.&#10;&#10;If you're up for it, you could write about a moment we shared, something you noticed about me, or something you think I should carry forward. Honest > polished."
                     />
                   </div>
