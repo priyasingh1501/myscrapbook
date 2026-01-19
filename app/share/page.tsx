@@ -161,7 +161,6 @@ export default function SharePage() {
               {submitting ? 'Adding Memory...' : 'Add to Scrapbook ✨'}
             </button>
           </form>
-                </div>
               </div>
             </div>
           </div>
