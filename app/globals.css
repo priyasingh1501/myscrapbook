@@ -388,6 +388,10 @@ body {
   z-index: 10;
 }
 
+.book-container.single-page {
+  max-width: 600px;
+}
+
 .book-page {
   flex: 1;
   min-height: 80vh;
@@ -416,6 +420,60 @@ body {
 .book-page-right {
   border-radius: 0 8px 8px 0;
   border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.book-page-right.hidden {
+  display: none;
+}
+
+.book-page-right.show {
+  display: flex;
+  animation: pageFlipIn 0.8s ease-in-out;
+}
+
+.book-page-left.flip-left {
+  animation: pageFlipOut 0.8s ease-in-out;
+  transform: rotateY(-180deg);
+  opacity: 0;
+}
+
+@keyframes pageFlipOut {
+  0% {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: rotateY(-180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes pageFlipIn {
+  0% {
+    transform: rotateY(180deg);
+    opacity: 0;
+  }
+  100% {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+.animate-blink {
+  animation: blink 1s infinite;
+}
+
+.page-flipped {
+  transform: scale(0.85) rotateY(0deg);
 }
 
 .book-page::before {

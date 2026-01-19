@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 const prompts = [
@@ -25,8 +25,58 @@ export default function SharePage() {
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [showPrompts, setShowPrompts] = useState(true)
+  const [showRightPage, setShowRightPage] = useState(false)
+  const [animatedText, setAnimatedText] = useState('')
+  const [isAnimating, setIsAnimating] = useState(true)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
   const router = useRouter()
+
+  const fullText = `It's been four and a half years at Tekion. When I joined, I never imagined I'd stay this long — but here we are.
+
+Tekion has been a very special chapter of my life. When I joined, I was just a bud — a self-taught designer, only a couple of years into this new design world, full of passion and eager to prove myself and create impact through my work.
+
+Over the years, this place taught me exactly that. From working on some amazing projects — including the SO Revamp, which was interestingly my very first project here — to learning through challenges and collaboration, I've grown not just as a designer, but as a mentor, a teammate, and a collaborator.
+
+The design team has always been very close to my heart, especially Fixed Ops. And while I spent most of my time with product teams, I'm deeply grateful to you all as well — the backbone of any product, often doing the most thankless work. You are incredible leaders, and I've learned so much from you.
+
+And of course, thank you to the real makers — our engineers — who brought my vision to life. Sorry for all the debates, and thank you for meeting me in them.
+
+I'll always cherish the beautiful moments, the laughter, and the people who made this journey so meaningful. Thank you for making my time at Tekion truly wonderful.
+
+Love,
+Priya`
+
+  useEffect(() => {
+    // Start background music
+    if (audioRef.current) {
+      audioRef.current.play().catch(err => {
+        console.log('Audio autoplay prevented:', err)
+      })
+    }
+
+    // Word-by-word animation
+    if (isAnimating) {
+      const words = fullText.split(' ')
+      let currentIndex = 0
+
+      const interval = setInterval(() => {
+        if (currentIndex < words.length) {
+          setAnimatedText(words.slice(0, currentIndex + 1).join(' '))
+          currentIndex++
+        } else {
+          setIsAnimating(false)
+          clearInterval(interval)
+        }
+      }, 100) // Adjust speed as needed
+
+      return () => clearInterval(interval)
+    }
+  }, [isAnimating, fullText])
+
+  const handleFlipPage = () => {
+    setShowRightPage(true)
+  }
 
   const insertPrompt = (prompt: string) => {
     if (formData.message.trim()) {
@@ -87,6 +137,12 @@ export default function SharePage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden book-background">
+      {/* Background Music */}
+      <audio ref={audioRef} loop>
+        <source src="/music.mp3" type="audio/mpeg" />
+        <source src="/music.ogg" type="audio/ogg" />
+      </audio>
+
       {/* Floating Clouds */}
       <div className="cloud cloud1"></div>
       <div className="cloud cloud2"></div>
@@ -96,9 +152,9 @@ export default function SharePage() {
 
       {/* Book Container */}
       <div className="relative z-20 min-h-screen flex items-center justify-center py-8 px-4">
-        <div className="book-container">
+        <div className={`book-container ${showRightPage ? 'page-flipped' : 'single-page'}`}>
           {/* Left Page - Message */}
-          <div className="book-page book-page-left">
+          <div className={`book-page book-page-left ${showRightPage ? 'flip-left' : ''}`}>
             <div className="page-content">
               {/* Heading */}
               <div className="mb-6">
@@ -122,33 +178,37 @@ export default function SharePage() {
               </div>
               
               <div className="space-y-6 text-gray-800 handwriting text-lg leading-relaxed">
-                <p>
-                  It's been four and a half years at Tekion, the longest I have stayed at a company. Thank you so much for being part of my wonderful journey here. Four and a half years at Tekion the longest I've stayed anywhere says more than I could.
-                </p>
-                
-                <p>
-                  This place shaped me in ways I didn't expect, through the people I worked with, learned from, and grew alongside. Thank you for the honesty, the challenges, the laughter, and the moments that made this journey meaningful.
-                </p>
-                
-                <p>
-                  I leave with gratitude, respect, and a lot of memories I'll carry forward. I'll truly miss this chapter and the people who made it what it was.
-                </p>
-                
-                <p className="mt-8">
-                  Love,<br />
-                  Priya
-                </p>
+                <div className="whitespace-pre-wrap">
+                  {animatedText}
+                  {isAnimating && <span className="animate-blink">|</span>}
+                </div>
               </div>
+
+              {!isAnimating && !showRightPage && (
+                <div className="mt-8 flex justify-center">
+                  <button
+                    onClick={handleFlipPage}
+                    className="px-8 py-3 rounded-lg text-white font-bold handwriting text-lg transition-all duration-300 hover:scale-105 shadow-md"
+                    style={{ 
+                      background: 'linear-gradient(to bottom, #87CEEB 0%, #98D8E8 50%, #B0E0E6 100%)',
+                      border: '1px solid rgba(135, 206, 235, 0.5)'
+                    }}
+                  >
+                    Add your note →
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Book Spine */}
-          <div className="book-spine"></div>
+          {/* Book Spine - Only show when right page is visible */}
+          {showRightPage && <div className="book-spine"></div>}
 
           {/* Right Page - Writing Area */}
-          <div className="book-page book-page-right">
-            <div className="page-content">
-              <form onSubmit={handleSubmit} className="h-full flex flex-col">
+          {showRightPage && (
+            <div className="book-page book-page-right show">
+              <div className="page-content">
+                <form onSubmit={handleSubmit} className="h-full flex flex-col">
                 {/* Transparent Writing Area */}
                 <div className="flex-1 flex flex-col">
                   <div className="flex-1 mb-4">
@@ -188,52 +248,9 @@ export default function SharePage() {
                   </button>
                 </div>
               </form>
-              
-              {/* Prompts Section */}
-              {showPrompts && (
-                <div className="mt-6 pt-6 border-t border-gray-300">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="nostalgic text-xl font-bold text-gray-800">
-                      Need Inspiration? 💭
-                    </h3>
-                    <button
-                      type="button"
-                      onClick={() => setShowPrompts(false)}
-                      className="text-gray-600 hover:text-gray-800 handwriting text-sm font-semibold"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  <div className="space-y-2">
-                    {prompts.map((prompt, index) => (
-                      <button
-                        key={index}
-                        type="button"
-                        onClick={() => insertPrompt(prompt)}
-                        className="w-full bg-white/30 hover:bg-white/50 backdrop-blur-sm border border-gray-200 hover:border-amber-400 rounded p-3 text-left transition-all duration-300 hover:scale-105 group"
-                      >
-                        <p className="handwriting text-gray-800 text-xs group-hover:text-amber-700">
-                          {prompt}
-                        </p>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {!showPrompts && (
-                <div className="mt-6 pt-6 border-t border-gray-300 text-center">
-                  <button
-                    type="button"
-                    onClick={() => setShowPrompts(true)}
-                    className="text-gray-600 hover:text-amber-700 handwriting text-sm font-semibold transition-colors"
-                  >
-                    Show Writing Prompts 💡
-                  </button>
-                </div>
-              )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
