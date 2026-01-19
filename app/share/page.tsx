@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
+// Digital Scrapbook - Share Page
+
 const prompts = [
   "What's your favorite memory of working together?",
   "What's something you admire about them?",
