@@ -87,6 +87,13 @@ export default function SharePage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden book-background">
+      {/* Floating Clouds */}
+      <div className="cloud cloud1"></div>
+      <div className="cloud cloud2"></div>
+      <div className="cloud cloud3"></div>
+      <div className="cloud cloud4"></div>
+      <div className="cloud cloud5"></div>
+
       {/* Book Container */}
       <div className="relative z-20 min-h-screen flex items-center justify-center py-8 px-4">
         <div className="book-container">
@@ -94,11 +101,16 @@ export default function SharePage() {
           <div className="book-page book-page-left">
             <div className="page-content">
               {/* Thank You GIF */}
-              <div className="flex justify-center mb-6">
+              <div className="flex justify-center mb-6" style={{ minHeight: '128px' }}>
                 <img 
-                  src="https://tenor.com/vUs9wZlvzv8.gif" 
+                  src="https://media.tenor.com/vUs9wZlvzv8AAAAC/thank-you.gif" 
                   alt="Thank you sticker" 
                   className="w-32 h-32 object-contain"
+                  style={{ width: '128px', height: '128px', display: 'block' }}
+                  onError={(e) => {
+                    // Fallback to original URL if media URL fails
+                    e.currentTarget.src = 'https://tenor.com/vUs9wZlvzv8.gif';
+                  }}
                 />
               </div>
               
@@ -130,12 +142,6 @@ export default function SharePage() {
           <div className="book-page book-page-right">
             <div className="page-content">
               <form onSubmit={handleSubmit} className="h-full flex flex-col">
-                <div className="page-header mb-6">
-                  <h2 className="nostalgic text-3xl md:text-4xl font-bold text-gray-800 text-center">
-                    Your Note
-                  </h2>
-                </div>
-                
                 {/* Transparent Writing Area */}
                 <div className="flex-1 flex flex-col">
                   <div className="flex-1 mb-4">
@@ -146,7 +152,7 @@ export default function SharePage() {
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       className="w-full h-full px-3 py-2 bg-transparent text-gray-800 placeholder-gray-400 focus:outline-none handwriting text-lg resize-none leading-relaxed"
-                      placeholder="Write your thoughts here... Let your words flow naturally onto the page..."
+                      placeholder="I'm making a farewell scrapbook and I'd really value a note from you.&#10;&#10;If you're up for it, you could write about a moment we shared, something you noticed about me, or something you think I should carry forward. Honest > polished."
                     />
                   </div>
                   
