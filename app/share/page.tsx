@@ -31,6 +31,7 @@ export default function SharePage() {
   const [animatedText, setAnimatedText] = useState('')
   const [isAnimating, setIsAnimating] = useState(true)
   const [musicStarted, setMusicStarted] = useState(false)
+  const [musicPlaying, setMusicPlaying] = useState(true)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
   const router = useRouter()
@@ -57,8 +58,21 @@ Priya`
       try {
         await audioRef.current.play()
         setMusicStarted(true)
+        setMusicPlaying(true)
       } catch (err) {
         console.log('Audio play failed:', err)
+      }
+    }
+  }
+
+  const toggleMusic = () => {
+    if (audioRef.current) {
+      if (musicPlaying) {
+        audioRef.current.pause()
+        setMusicPlaying(false)
+      } else {
+        audioRef.current.play()
+        setMusicPlaying(true)
       }
     }
   }
@@ -240,11 +254,28 @@ Priya`
           {/* Right Page - Writing Area */}
           {showRightPage && (
             <div className="book-page book-page-right show">
-              <div className="page-content" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <form onSubmit={handleSubmit} className="flex-1 flex flex-col" style={{ minHeight: 0 }}>
+              <div className="page-content" style={{ height: '100%', display: 'flex', flexDirection: 'column', width: '100%' }}>
+                {/* Music Control Button */}
+                <div className="flex justify-end mb-4 flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={toggleMusic}
+                    className="px-4 py-2 rounded-lg text-gray-700 handwriting text-sm transition-all duration-300 hover:scale-105 shadow-sm"
+                    style={{ 
+                      background: 'rgba(255, 255, 255, 0.3)',
+                      border: '1px solid rgba(0, 0, 0, 0.1)',
+                      backdropFilter: 'blur(10px)'
+                    }}
+                    title={musicPlaying ? 'Pause music' : 'Play music'}
+                  >
+                    {musicPlaying ? '🔊 Music On' : '🔇 Music Off'}
+                  </button>
+                </div>
+                
+                <form onSubmit={handleSubmit} className="flex-1 flex flex-col w-full" style={{ minHeight: 0, height: '100%' }}>
                 {/* Transparent Writing Area */}
-                <div className="flex-1 flex flex-col" style={{ minHeight: 0 }}>
-                  <div className="flex-1 mb-4" style={{ minHeight: 0 }}>
+                <div className="flex-1 flex flex-col w-full" style={{ minHeight: 0, height: '100%' }}>
+                  <div className="flex-1 mb-4 w-full" style={{ minHeight: 0, height: '100%' }}>
                     <textarea
                       ref={textareaRef}
                       id="message"
@@ -252,12 +283,12 @@ Priya`
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       className="w-full h-full px-3 py-2 bg-transparent text-gray-800 placeholder-gray-400 focus:outline-none handwriting text-lg resize-none leading-relaxed"
-                      style={{ minHeight: '400px' }}
+                      style={{ width: '100%', height: '100%' }}
                       placeholder="I'm making a farewell scrapbook and I'd really value a note from you.&#10;&#10;If you're up for it, you could write about a moment we shared, something you noticed about me, or something you think I should carry forward. Honest > polished."
                     />
                   </div>
                   
-                  <div className="mb-4">
+                  <div className="mb-4 w-full flex-shrink-0">
                     <input
                       type="text"
                       id="author"
@@ -265,6 +296,7 @@ Priya`
                       value={formData.author}
                       onChange={(e) => setFormData({ ...formData, author: e.target.value })}
                       className="w-full px-3 py-2 bg-transparent text-gray-800 placeholder-gray-500 border-b-2 border-gray-300 focus:outline-none focus:border-amber-700 handwriting text-lg"
+                      style={{ width: '100%' }}
                       placeholder="Let me know who you are"
                     />
                   </div>
@@ -272,10 +304,11 @@ Priya`
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full px-6 py-3 rounded-lg text-white font-bold handwriting text-base transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+                    className="w-full px-6 py-3 rounded-lg text-white font-bold handwriting text-base transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-md flex-shrink-0"
                     style={{ 
                       background: 'linear-gradient(to bottom, #87CEEB 0%, #98D8E8 50%, #B0E0E6 100%)',
-                      border: '1px solid rgba(135, 206, 235, 0.5)'
+                      border: '1px solid rgba(135, 206, 235, 0.5)',
+                      width: '100%'
                     }}
                   >
                     {submitting ? 'Adding Memory...' : 'Add to Scrapbook ✨'}
