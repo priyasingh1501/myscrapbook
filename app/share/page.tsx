@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-// Digital Scrapbook - Share Page
+// Digital Scrapbook - Share Page Component
 
 const prompts = [
   "What's your favorite memory of working together?",
