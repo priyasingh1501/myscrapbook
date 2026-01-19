@@ -36,6 +36,7 @@ export default function SharePage() {
   const audioRef = useRef<HTMLAudioElement>(null)
   const animatedTextRef = useRef<HTMLDivElement>(null)
   const leftPageRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
   const fullText = `It's been four and a half years at Tekion. When I joined, I never imagined I'd stay this long — but here we are.
@@ -92,11 +93,9 @@ Priya`
           
           // Auto-scroll to keep animated text in view
           if (animatedTextRef.current && leftPageRef.current) {
-            // Scroll the left page container to show the animated text
             const textElement = animatedTextRef.current
             const pageElement = leftPageRef.current
             
-            // Calculate the position of the text element relative to the page
             const textBottom = textElement.offsetTop + textElement.offsetHeight
             const pageHeight = pageElement.clientHeight
             const scrollTop = pageElement.scrollTop
@@ -112,6 +111,26 @@ Priya`
         } else {
           setIsAnimating(false)
           clearInterval(interval)
+          
+          // After animation completes, scroll to show the button at the bottom
+          setTimeout(() => {
+            if (buttonRef.current && leftPageRef.current) {
+              const buttonElement = buttonRef.current
+              const pageElement = leftPageRef.current
+              
+              const buttonBottom = buttonElement.offsetTop + buttonElement.offsetHeight
+              const pageHeight = pageElement.clientHeight
+              const scrollTop = pageElement.scrollTop
+              
+              // Scroll until button is visible at the bottom
+              if (buttonBottom > scrollTop + pageHeight - 50) {
+                pageElement.scrollTo({
+                  top: buttonBottom - pageHeight + 50,
+                  behavior: 'smooth'
+                })
+              }
+            }
+          }, 300) // Small delay to ensure DOM is updated
         }
       }, 100) // Adjust speed as needed
 
@@ -254,7 +273,7 @@ Priya`
               </div>
 
               {!isAnimating && !showRightPage && (
-                <div className="mt-8 flex justify-center">
+                <div ref={buttonRef} className="mt-8 flex justify-center flex-shrink-0">
                   <button
                     onClick={handleFlipPage}
                     className="px-8 py-3 rounded-lg text-white font-bold handwriting text-lg transition-all duration-300 hover:scale-105 shadow-md"
@@ -313,7 +332,7 @@ Priya`
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       className="w-full h-full px-3 py-2 bg-transparent text-gray-800 placeholder-gray-400 focus:outline-none handwriting text-lg resize-none leading-relaxed"
                       style={{ width: '100%', height: '100%' }}
-                      placeholder="I'm making a farewell scrapbook and I'd really value a note from you.&#10;&#10;If you're up for it, you could write about a moment we shared, something you noticed about me, or something you think I should carry forward. Honest > polished."
+                      placeholder="Type your message here"
                     />
                   </div>
                   
