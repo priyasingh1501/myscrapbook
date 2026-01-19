@@ -93,6 +93,15 @@ export default function SharePage() {
           {/* Left Page - Message */}
           <div className="book-page book-page-left">
             <div className="page-content">
+              {/* Thank You GIF */}
+              <div className="flex justify-center mb-6">
+                <img 
+                  src="https://tenor.com/vUs9wZlvzv8.gif" 
+                  alt="Thank you sticker" 
+                  className="w-32 h-32 object-contain"
+                />
+              </div>
+              
               <div className="space-y-6 text-gray-800 handwriting text-lg leading-relaxed">
                 <p>
                   It's been four and a half years at Tekion, the longest I have stayed at a company. Thank you so much for being part of my wonderful journey here. Four and a half years at Tekion the longest I've stayed anywhere says more than I could.
@@ -129,6 +138,18 @@ export default function SharePage() {
                 
                 {/* Transparent Writing Area */}
                 <div className="flex-1 flex flex-col">
+                  <div className="flex-1 mb-4">
+                    <textarea
+                      ref={textareaRef}
+                      id="message"
+                      required
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      className="w-full h-full px-3 py-2 bg-transparent text-gray-800 placeholder-gray-400 focus:outline-none handwriting text-lg resize-none leading-relaxed"
+                      placeholder="Write your thoughts here... Let your words flow naturally onto the page..."
+                    />
+                  </div>
+                  
                   <div className="mb-4">
                     <label htmlFor="author" className="block text-gray-700 handwriting text-base mb-2">
                       Your Name
@@ -141,18 +162,6 @@ export default function SharePage() {
                       onChange={(e) => setFormData({ ...formData, author: e.target.value })}
                       className="w-full px-3 py-2 bg-transparent text-gray-800 placeholder-gray-500 border-b-2 border-gray-300 focus:outline-none focus:border-amber-700 handwriting text-lg"
                       placeholder="Sign your name here..."
-                    />
-                  </div>
-                  
-                  <div className="flex-1 mb-4">
-                    <textarea
-                      ref={textareaRef}
-                      id="message"
-                      required
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full h-full px-3 py-2 bg-transparent text-gray-800 placeholder-gray-400 focus:outline-none handwriting text-lg resize-none leading-relaxed"
-                      placeholder="Write your thoughts here... Let your words flow naturally onto the page..."
                     />
                   </div>
                   
