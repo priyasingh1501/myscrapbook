@@ -265,7 +265,7 @@ Priya`
                 />
               </div>
               
-              <div className="space-y-6 text-gray-800 handwriting text-lg leading-relaxed">
+              <div className="space-y-6 text-gray-800 handwriting text-lg leading-relaxed pb-8">
                 <div ref={animatedTextRef} className="whitespace-pre-wrap">
                   {animatedText}
                   {isAnimating && <span className="animate-blink">|</span>}
