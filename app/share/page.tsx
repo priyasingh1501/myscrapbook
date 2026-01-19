@@ -185,7 +185,10 @@ Priya`
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          author: formData.author,
+          message: formData.message,
+        }),
       })
 
       if (response.ok) {
@@ -194,11 +197,13 @@ Priya`
           router.push('/')
         }, 3000)
       } else {
-        alert('Something went wrong. Please try again.')
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+        console.error('Error response:', errorData)
+        alert(`Failed to save note: ${errorData.error || 'Please try again.'}`)
       }
     } catch (error) {
       console.error('Error submitting note:', error)
-      alert('Something went wrong. Please try again.')
+      alert(`Error: ${error instanceof Error ? error.message : 'Something went wrong. Please try again.'}`)
     } finally {
       setSubmitting(false)
     }

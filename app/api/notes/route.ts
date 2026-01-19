@@ -38,8 +38,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(note, { status: 201 })
   } catch (error) {
     console.error('Error saving note:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Failed to save note'
     return NextResponse.json(
-      { error: 'Failed to save note' },
+      { error: errorMessage, details: error instanceof Error ? error.stack : undefined },
       { status: 500 }
     )
   }

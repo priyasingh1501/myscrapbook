@@ -116,13 +116,15 @@ export async function saveNote(note: Omit<Note, 'id' | 'createdAt'>): Promise<No
       
       if (error) {
         console.error('Error saving to Supabase:', error);
-        throw error;
+        // Fall through to file system fallback if available
+      } else {
+        // Success with Supabase
+        console.log('Note saved to Supabase:', newNote.id);
+        return newNote;
       }
-      
-      return newNote;
     } catch (error) {
       console.error('Error saving to Supabase:', error);
-      throw error;
+      // Fall through to file system fallback if available
     }
   }
   
@@ -132,14 +134,20 @@ export async function saveNote(note: Omit<Note, 'id' | 'createdAt'>): Promise<No
       const notes = await getNotes();
       notes.push(newNote);
       fs.writeFileSync(dataFilePath, JSON.stringify(notes, null, 2));
+      console.log('Note saved to file system:', newNote.id);
       return newNote;
     } catch (error) {
       console.error('Error saving to file:', error);
-      throw error;
+      throw new Error(`File system error: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
   
-  throw new Error('No storage method available. Please set up Supabase or use local development.');
+  // If we get here, both Supabase and file system failed or are unavailable
+  const errorMsg = supabase 
+    ? 'Supabase is configured but save failed. Check Supabase connection and table setup. Error details in server logs.'
+    : 'No storage method available. Please set up Supabase or use local development.';
+  console.error(errorMsg);
+  throw new Error(errorMsg);
 }
 
 export async function getPublicNotes(): Promise<Note[]> {

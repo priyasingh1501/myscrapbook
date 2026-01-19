@@ -7,11 +7,19 @@ export default function Dashboard() {
   const [notes, setNotes] = useState<Note[]>([])
   const [loading, setLoading] = useState(true)
   const [shareLink, setShareLink] = useState('')
+  const [windowWidth, setWindowWidth] = useState(1200)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setShareLink(`${window.location.origin}/share`)
+      setWindowWidth(window.innerWidth)
       fetchNotes()
+      
+      const handleResize = () => {
+        setWindowWidth(window.innerWidth)
+      }
+      window.addEventListener('resize', handleResize)
+      return () => window.removeEventListener('resize', handleResize)
     }
   }, [])
 
@@ -35,32 +43,73 @@ export default function Dashboard() {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  // Calculate random rotation and position for scrapbook effect
+  const getScrapbookStyle = (index: number, note: Note) => {
+    const rotations = [-3, -2, -1, 0, 1, 2, 3, -4, 4, -1.5, 1.5]
+    const rotation = rotations[index % rotations.length]
+    const zIndex = index + 1
+    
+    // Determine size based on content
+    const messageLength = note.message.length
+    let width = 280
+    let minHeight = 200
+    
+    if (messageLength > 600) {
+      width = 380
+      minHeight = 300
+    } else if (messageLength > 300) {
+      width = 320
+      minHeight = 250
+    }
+    
+    // Calculate position for collage layout
+    const cols = Math.floor(windowWidth / 350) || 3
+    const col = index % cols
+    const row = Math.floor(index / cols)
+    
+    const leftOffset = (index % 3) * 50 - 50 // Overlap effect
+    const topOffset = (index % 4) * 40 - 40
+    
+    const left = `${col * 320 + leftOffset + 50}px`
+    const top = `${row * 280 + topOffset + 50}px`
+    
+    return {
+      transform: `rotate(${rotation}deg)`,
+      zIndex,
+      width: `${width}px`,
+      minHeight: `${minHeight}px`,
+      left,
+      top,
+    }
+  }
+
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="scrapbook-dashboard min-h-screen p-4 md:p-8">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="glass-strong rounded-3xl p-8 mb-8 text-center floating">
-          <h1 className="nostalgic text-6xl md:text-7xl font-bold text-white mb-4 drop-shadow-lg">
+        <div className="scrapbook-header mb-8 text-center">
+          <h1 className="nostalgic text-5xl md:text-6xl font-bold text-gray-800 mb-2 drop-shadow-sm">
             My Digital Scrapbook
           </h1>
-          <p className="handwriting text-xl md:text-2xl text-white/90 mb-6">
+          <p className="handwriting text-lg md:text-xl text-gray-700 mb-6">
             Memories & Moments from Amazing People
           </p>
           
           {/* Share Link Section */}
-          <div className="glass rounded-2xl p-6 max-w-2xl mx-auto">
-            <p className="handwriting text-lg text-white mb-3">Share this link with your colleagues:</p>
+          <div className="scrapbook-share-box inline-block p-6 max-w-2xl mx-auto relative">
+            <div className="paperclip-decoration"></div>
+            <p className="handwriting text-base text-gray-800 mb-3">Share this link with your colleagues:</p>
             <div className="flex flex-col sm:flex-row gap-3">
               <input
                 type="text"
                 value={shareLink}
                 readOnly
-                className="flex-1 px-4 py-3 rounded-xl bg-white/20 text-white placeholder-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-amber-600 handwriting"
+                className="flex-1 px-4 py-3 rounded-lg bg-white/90 text-gray-800 placeholder-gray-500 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-600 handwriting"
               />
               <button
                 onClick={copyToClipboard}
-                className="px-6 py-3 bg-amber-700/80 hover:bg-amber-700 rounded-xl text-white font-bold handwriting transition-all duration-300 hover:scale-105 flex items-center gap-2 shadow-lg shadow-amber-600/50"
+                className="px-6 py-3 bg-amber-600 hover:bg-amber-700 rounded-lg text-white font-bold handwriting transition-all duration-300 hover:scale-105 flex items-center gap-2 shadow-md"
               >
                 {copied ? (
                   <>
@@ -74,41 +123,61 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Notes Grid */}
+        {/* Scrapbook Collage */}
         {loading ? (
-          <div className="text-center text-white handwriting text-2xl">Loading memories...</div>
+          <div className="text-center text-gray-700 handwriting text-2xl">Loading memories...</div>
         ) : notes.length === 0 ? (
-          <div className="glass-strong rounded-3xl p-12 text-center">
-            <p className="nostalgic text-3xl text-white mb-4">No memories yet...</p>
-            <p className="handwriting text-xl text-white/80">Share the link above to start collecting memories!</p>
+          <div className="scrapbook-empty text-center p-12">
+            <p className="nostalgic text-3xl text-gray-800 mb-4">No memories yet...</p>
+            <p className="handwriting text-xl text-gray-700">Share the link above to start collecting memories!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {notes.map((note, index) => (
-              <div
-                key={note.id}
-                className="note-card glass-strong rounded-2xl p-6"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="mb-4">
-                  <div className="mb-2">
-                    <h3 className="nostalgic text-2xl font-bold text-white">
-                      {note.author}
-                    </h3>
+          <div className="scrapbook-collage">
+            {notes.map((note, index) => {
+              const style = getScrapbookStyle(index, note)
+              const hasPin = index % 3 === 0
+              const hasTape = index % 4 === 1
+              const hasPaperclip = index % 5 === 2
+              
+              return (
+                <div
+                  key={note.id}
+                  className="scrapbook-photo-card"
+                  style={style}
+                >
+                  {/* Decorative Pin */}
+                  {hasPin && <div className="photo-pin pin-red"></div>}
+                  {hasPin && index % 6 === 0 && <div className="photo-pin pin-white"></div>}
+                  
+                  {/* Decorative Tape */}
+                  {hasTape && <div className="photo-tape tape-green"></div>}
+                  
+                  {/* Card Content */}
+                  <div className="photo-content">
+                    <div className="photo-frame">
+                      <div className="photo-inner">
+                        <h3 className="nostalgic text-xl font-bold text-gray-800 mb-3">
+                          {note.author}
+                        </h3>
+                        <p className="handwriting text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">
+                          {note.message}
+                        </p>
+                        <div className="photo-date handwriting text-xs text-gray-500 mt-4 pt-3 border-t border-gray-300">
+                          {new Date(note.createdAt).toLocaleDateString('en-US', {
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <p className="handwriting text-gray-200 text-base leading-relaxed whitespace-pre-wrap">
-                    {note.message}
-                  </p>
+                  
+                  {/* Decorative Paperclip */}
+                  {hasPaperclip && <div className="photo-paperclip"></div>}
                 </div>
-                <div className="text-xs text-gray-400 handwriting mt-4 pt-4 border-t border-gray-600">
-                  {new Date(note.createdAt).toLocaleDateString('en-US', {
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })}
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
