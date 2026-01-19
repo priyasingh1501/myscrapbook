@@ -34,6 +34,8 @@ export default function SharePage() {
   const [musicPlaying, setMusicPlaying] = useState(true)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
+  const animatedTextRef = useRef<HTMLDivElement>(null)
+  const leftPageRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
   const fullText = `It's been four and a half years at Tekion. When I joined, I never imagined I'd stay this long — but here we are.
@@ -87,6 +89,26 @@ Priya`
         if (currentIndex < words.length) {
           setAnimatedText(words.slice(0, currentIndex + 1).join(' '))
           currentIndex++
+          
+          // Auto-scroll to keep animated text in view
+          if (animatedTextRef.current && leftPageRef.current) {
+            // Scroll the left page container to show the animated text
+            const textElement = animatedTextRef.current
+            const pageElement = leftPageRef.current
+            
+            // Calculate the position of the text element relative to the page
+            const textBottom = textElement.offsetTop + textElement.offsetHeight
+            const pageHeight = pageElement.clientHeight
+            const scrollTop = pageElement.scrollTop
+            
+            // If text is near the bottom of visible area, scroll down
+            if (textBottom > scrollTop + pageHeight - 100) {
+              pageElement.scrollTo({
+                top: textBottom - pageHeight + 150,
+                behavior: 'smooth'
+              })
+            }
+          }
         } else {
           setIsAnimating(false)
           clearInterval(interval)
@@ -201,7 +223,7 @@ Priya`
       <div className="relative z-20 min-h-screen flex items-center justify-center py-8 px-4">
         <div className={`book-container ${showRightPage ? 'page-flipped' : 'single-page'}`}>
           {/* Left Page - Message */}
-          <div className={`book-page book-page-left ${showRightPage ? 'flip-left' : ''}`}>
+          <div ref={leftPageRef} className={`book-page book-page-left ${showRightPage ? 'flip-left' : ''}`}>
             <div className="page-content">
               {/* Heading */}
               <div className="mb-6">
@@ -225,7 +247,7 @@ Priya`
               </div>
               
               <div className="space-y-6 text-gray-800 handwriting text-lg leading-relaxed">
-                <div className="whitespace-pre-wrap">
+                <div ref={animatedTextRef} className="whitespace-pre-wrap">
                   {animatedText}
                   {isAnimating && <span className="animate-blink">|</span>}
                 </div>
@@ -255,6 +277,13 @@ Priya`
           {showRightPage && (
             <div className="book-page book-page-right show">
               <div className="page-content" style={{ height: '100%', display: 'flex', flexDirection: 'column', width: '100%' }}>
+                {/* Heading */}
+                <div className="mb-6 flex-shrink-0">
+                  <h2 className="nostalgic text-3xl md:text-4xl font-bold text-gray-800 text-center">
+                    Would love to hear from you
+                  </h2>
+                </div>
+                
                 {/* Music Control Button */}
                 <div className="flex justify-end mb-4 flex-shrink-0">
                   <button
@@ -308,7 +337,8 @@ Priya`
                     style={{ 
                       background: 'linear-gradient(to bottom, #87CEEB 0%, #98D8E8 50%, #B0E0E6 100%)',
                       border: '1px solid rgba(135, 206, 235, 0.5)',
-                      width: '100%'
+                      width: '100%',
+                      marginBottom: '2rem'
                     }}
                   >
                     {submitting ? 'Adding Memory...' : 'Add to Scrapbook ✨'}
