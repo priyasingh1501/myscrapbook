@@ -102,6 +102,13 @@ export default function Dashboard() {
     }
   }
 
+  // Generate consistent random values for each note based on index
+  const getRandomForIndex = (index: number, seed: number) => {
+    // Simple seeded random function for consistency
+    const x = Math.sin(index * seed) * 10000
+    return x - Math.floor(x)
+  }
+
   // Calculate position for notes without overlap, connected by string
   const getScrapbookStyle = (index: number, note: Note) => {
     const rotations = [-2, -1, 0, 1, 2, -1.5, 1.5, -0.5, 0.5]
@@ -145,7 +152,20 @@ export default function Dashboard() {
     }
   }
 
-  // Calculate string path connecting all notes with loose/sagging effect
+  // Get random pin position for each note (consistent per note)
+  const getPinPosition = (index: number, cardWidth: number) => {
+    // Generate consistent random position between 20% and 80% of card width
+    const randomX = getRandomForIndex(index, 12.345) // Seed for X position
+    const pinXPercent = 0.2 + (randomX * 0.6) // Between 20% and 80%
+    const pinX = cardWidth * pinXPercent
+    
+    // Pin Y is always near the top (8px above card)
+    const pinY = -8
+    
+    return { pinX, pinY }
+  }
+
+  // Calculate string path connecting all notes with random/curved loose effect
   const getStringPath = () => {
     if (notes.length === 0) return ''
     
@@ -171,30 +191,40 @@ export default function Dashboard() {
         cardWidth = 320
       }
       
-      // Pin is positioned at top center of card (left: 50%, top: -8px)
-      // String connects at the pin location (center of pin, which is 8px above card top)
-      const pinX = col * cardSpacing + 50 + (cardWidth / 2) // Center of card (where pin is)
-      const pinY = row * rowSpacing + 50 - 8 // 8px above card top (pin center)
+      // Get random pin position for this card
+      const { pinX: relativePinX, pinY: relativePinY } = getPinPosition(index, cardWidth)
+      
+      // Calculate absolute pin position
+      const cardLeft = col * cardSpacing + 50
+      const cardTop = row * rowSpacing + 50
+      const pinX = cardLeft + relativePinX // Random position along card width
+      const pinY = cardTop + relativePinY // 8px above card top
       
       if (index === 0) {
         path += `M ${pinX} ${pinY}`
         prevPinX = pinX
         prevPinY = pinY
       } else {
-        // Calculate distance and midpoint for sagging effect
+        // Calculate distance and midpoint
         const midX = (prevPinX + pinX) / 2
         const midY = (prevPinY + pinY) / 2
         const distance = Math.sqrt(Math.pow(pinX - prevPinX, 2) + Math.pow(pinY - prevPinY, 2))
         
+        // Add random variation to create organic, non-Z shape
+        const randomOffsetX = (Math.random() - 0.5) * Math.min(distance * 0.3, 60) // Random horizontal offset
+        const randomOffsetY = (Math.random() - 0.5) * 20 // Random vertical variation
+        
         // Add sag - the longer the distance, the more sag (loose string effect)
         const sagAmount = Math.min(distance * 0.15, 40) // Max 40px sag
-        const sagY = midY + sagAmount
         
-        // Use quadratic curve to create loose/sagging effect
-        const controlX = midX
-        const controlY = sagY
+        // Create two control points for smoother, more random curves
+        const control1X = prevPinX + (pinX - prevPinX) * 0.3 + randomOffsetX * 0.5
+        const control1Y = prevPinY + (pinY - prevPinY) * 0.3 + sagAmount * 0.5 + randomOffsetY
+        const control2X = prevPinX + (pinX - prevPinX) * 0.7 + randomOffsetX * 0.5
+        const control2Y = prevPinY + (pinY - prevPinY) * 0.7 + sagAmount + randomOffsetY
         
-        path += ` Q ${controlX} ${controlY} ${pinX} ${pinY}`
+        // Use cubic bezier curve for smoother, more organic path
+        path += ` C ${control1X} ${control1Y}, ${control2X} ${control2Y}, ${pinX} ${pinY}`
         
         prevPinX = pinX
         prevPinY = pinY
@@ -262,7 +292,7 @@ export default function Dashboard() {
             <p className="handwriting text-xl text-white/90">Share the link above to start collecting memories!</p>
           </div>
         ) : (
-          <div className="scrapbook-collage" style={{ position: 'relative', minHeight: `${containerHeight}px`, height: 'auto', paddingBottom: '100px' }}>
+          <div className="scrapbook-collage" style={{ position: 'relative', minHeight: `${containerHeight}px`, height: 'auto', paddingBottom: '100px', paddingRight: '50px' }}>
             {/* String connecting all notes */}
             {notes.length > 1 && (
               <svg
@@ -294,14 +324,57 @@ export default function Dashboard() {
               const hasTape = index % 4 === 1
               const hasPaperclip = index % 5 === 2
               
+              // Vary pin colors and shapes
+              const pinColors = ['#dc2626', '#2563eb', '#16a34a', '#ca8a04', '#9333ea', '#e11d48', '#0891b2', '#f59e0b']
+              const pinColor = pinColors[index % pinColors.length]
+              const pinShapes = ['circle', 'square', 'diamond', 'star']
+              const pinShape = pinShapes[index % pinShapes.length]
+              
+              // Get random pin position for this card
+              const messageLength = note.message.length
+              let cardWidth = 280
+              if (messageLength > 600) {
+                cardWidth = 380
+              } else if (messageLength > 300) {
+                cardWidth = 320
+              }
+              const { pinX: relativePinX } = getPinPosition(index, cardWidth)
+              
+              // Calculate pin style based on shape
+              const getPinStyle = () => {
+                const baseStyle: any = {
+                  background: pinColor,
+                  top: '-8px',
+                  left: `${relativePinX}px`, // Random position along card width
+                  zIndex: 20,
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                }
+                
+                switch (pinShape) {
+                  case 'circle':
+                    return { ...baseStyle, borderRadius: '50%', transform: 'translateX(-50%)', width: '16px', height: '16px' }
+                  case 'square':
+                    return { ...baseStyle, borderRadius: '2px', transform: 'translateX(-50%)', width: '14px', height: '14px' }
+                  case 'diamond':
+                    return { ...baseStyle, borderRadius: '0', transform: 'translateX(-50%) rotate(45deg)', width: '12px', height: '12px' }
+                  case 'star':
+                    return { ...baseStyle, borderRadius: '50%', transform: 'translateX(-50%)', width: '16px', height: '16px', clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)' }
+                  default:
+                    return { ...baseStyle, borderRadius: '50%', transform: 'translateX(-50%)', width: '16px', height: '16px' }
+                }
+              }
+              
               return (
                 <div
                   key={note.id}
                   className="scrapbook-photo-card"
                   style={style}
                 >
-                  {/* Decorative Pin - All notes have pins to hang from string */}
-                  <div className="photo-pin pin-red"></div>
+                  {/* Decorative Pin - All notes have pins to hang from string with varied colors, shapes, and random positions */}
+                  <div 
+                    className="photo-pin" 
+                    style={getPinStyle()}
+                  ></div>
                   
                   {/* Decorative Tape */}
                   {hasTape && <div className="photo-tape tape-green"></div>}
