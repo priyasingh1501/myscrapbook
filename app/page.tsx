@@ -318,34 +318,40 @@ export default function Dashboard() {
       // Calculate midpoint with sag for placement
       const distance = Math.sqrt(Math.pow(pinX - prevPinX, 2) + Math.pow(pinY - prevPinY, 2))
       const sagAmount = Math.min(distance * 0.15, 40)
-      const midX = (prevPinX + pinX) / 2
-      const midY = (prevPinY + pinY) / 2 + sagAmount * 0.7 // Place decoration at the sag point
       
-      // Randomly choose decoration type
       const decorationTypes = [
         'circle', 'ribbon', 'star', 'triangle', 'heart', 'diamond', 'hexagon', 
         'pentagon', 'square', 'crescent', 'balloon', 'bell', 'snowflake', 
         'bow', 'candycane', 'giftbox', 'flower', 'leaf', 'butterfly', 
         'cloud', 'sun', 'musicnote'
       ]
-      const decorationType = decorationTypes[Math.floor(getRandomForIndex(index, 99.99) * decorationTypes.length)]
       
-      // Random colors for decorations
       const decorationColors = ['#dc2626', '#2563eb', '#16a34a', '#ca8a04', '#9333ea', '#e11d48', '#0891b2', '#f59e0b', '#ec4899', '#8b5cf6']
-      const decorationColor = decorationColors[Math.floor(getRandomForIndex(index, 77.77) * decorationColors.length)]
       
-      // Random size and rotation
-      const size = 23.4 + getRandomForIndex(index, 55.55) * 15.6 // 23.4-39px (95% bigger than original)
-      const rotation = getRandomForIndex(index, 33.33) * 360 // 0-360 degrees
-      
-      decorations.push({
-        type: decorationType,
-        x: midX,
-        y: midY,
-        color: decorationColor,
-        size: size,
-        rotation: rotation
-      })
+      // Add 2 decorations per string segment (2x increase)
+      for (let i = 0; i < 2; i++) {
+        // Position decorations at different points along the string
+        const positionFactor = i === 0 ? 0.35 : 0.65 // First at 35%, second at 65%
+        const posX = prevPinX + (pinX - prevPinX) * positionFactor
+        const posY = prevPinY + (pinY - prevPinY) * positionFactor + sagAmount * 0.7
+        
+        // Randomly choose decoration type
+        const decorationType = decorationTypes[Math.floor(getRandomForIndex(index, 99.99 + i * 31) * decorationTypes.length)]
+        const decorationColor = decorationColors[Math.floor(getRandomForIndex(index, 77.77 + i * 41) * decorationColors.length)]
+        
+        // Random size and rotation
+        const size = 23.4 + getRandomForIndex(index, 55.55 + i * 51) * 15.6 // 23.4-39px
+        const rotation = getRandomForIndex(index, 33.33 + i * 61) * 360 // 0-360 degrees
+        
+        decorations.push({
+          type: decorationType,
+          x: posX,
+          y: posY,
+          color: decorationColor,
+          size: size,
+          rotation: rotation
+        })
+      }
     })
     
     return decorations
@@ -365,8 +371,8 @@ export default function Dashboard() {
     
     const decorationColors = ['#dc2626', '#2563eb', '#16a34a', '#ca8a04', '#9333ea', '#e11d48', '#0891b2', '#f59e0b', '#ec4899', '#8b5cf6']
     
-    // Generate 2-4 decorations per card
-    const numDecorations = 2 + Math.floor(getRandomForIndex(cardIndex, 111.11) * 3) // 2-4 decorations
+    // Generate 4-8 decorations per card (2x increase)
+    const numDecorations = 4 + Math.floor(getRandomForIndex(cardIndex, 111.11) * 5) // 4-8 decorations
     
     for (let i = 0; i < numDecorations; i++) {
       const decorationType = decorationTypes[Math.floor(getRandomForIndex(cardIndex, 99.99 + i * 7) * decorationTypes.length)]
