@@ -322,7 +322,12 @@ export default function Dashboard() {
       const midY = (prevPinY + pinY) / 2 + sagAmount * 0.7 // Place decoration at the sag point
       
       // Randomly choose decoration type
-      const decorationTypes = ['circle', 'ribbon', 'star', 'triangle']
+      const decorationTypes = [
+        'circle', 'ribbon', 'star', 'triangle', 'heart', 'diamond', 'hexagon', 
+        'pentagon', 'square', 'crescent', 'balloon', 'bell', 'snowflake', 
+        'bow', 'candycane', 'giftbox', 'flower', 'leaf', 'butterfly', 
+        'cloud', 'sun', 'musicnote'
+      ]
       const decorationType = decorationTypes[Math.floor(getRandomForIndex(index, 99.99) * decorationTypes.length)]
       
       // Random colors for decorations
@@ -507,6 +512,480 @@ export default function Dashboard() {
                           filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
                         }}
                       />
+                    )
+                  } else if (decoration.type === 'heart') {
+                    return (
+                      <path
+                        key={idx}
+                        d={`M ${decoration.x} ${decoration.y + decoration.size / 4} 
+                            C ${decoration.x} ${decoration.y} ${decoration.x - decoration.size / 2} ${decoration.y - decoration.size / 3} ${decoration.x - decoration.size / 2} ${decoration.y} 
+                            C ${decoration.x - decoration.size / 2} ${decoration.y + decoration.size / 6} ${decoration.x} ${decoration.y + decoration.size / 2} ${decoration.x} ${decoration.y + decoration.size / 2}
+                            C ${decoration.x} ${decoration.y + decoration.size / 2} ${decoration.x + decoration.size / 2} ${decoration.y + decoration.size / 6} ${decoration.x + decoration.size / 2} ${decoration.y}
+                            C ${decoration.x + decoration.size / 2} ${decoration.y - decoration.size / 3} ${decoration.x} ${decoration.y} ${decoration.x} ${decoration.y + decoration.size / 4} Z`}
+                        fill={decoration.color}
+                        opacity="0.8"
+                        transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
+                        style={{
+                          filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                        }}
+                      />
+                    )
+                  } else if (decoration.type === 'diamond') {
+                    return (
+                      <polygon
+                        key={idx}
+                        points={`${decoration.x},${decoration.y - decoration.size / 2} ${decoration.x + decoration.size / 2},${decoration.y} ${decoration.x},${decoration.y + decoration.size / 2} ${decoration.x - decoration.size / 2},${decoration.y}`}
+                        fill={decoration.color}
+                        opacity="0.8"
+                        transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
+                        style={{
+                          filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                        }}
+                      />
+                    )
+                  } else if (decoration.type === 'hexagon') {
+                    const hexPoints = []
+                    for (let i = 0; i < 6; i++) {
+                      const angle = (i * Math.PI) / 3
+                      const x = decoration.x + Math.cos(angle) * decoration.size / 2
+                      const y = decoration.y + Math.sin(angle) * decoration.size / 2
+                      hexPoints.push(`${x},${y}`)
+                    }
+                    return (
+                      <polygon
+                        key={idx}
+                        points={hexPoints.join(' ')}
+                        fill={decoration.color}
+                        opacity="0.8"
+                        transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
+                        style={{
+                          filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                        }}
+                      />
+                    )
+                  } else if (decoration.type === 'pentagon') {
+                    const pentPoints = []
+                    for (let i = 0; i < 5; i++) {
+                      const angle = (i * 2 * Math.PI) / 5 - Math.PI / 2
+                      const x = decoration.x + Math.cos(angle) * decoration.size / 2
+                      const y = decoration.y + Math.sin(angle) * decoration.size / 2
+                      pentPoints.push(`${x},${y}`)
+                    }
+                    return (
+                      <polygon
+                        key={idx}
+                        points={pentPoints.join(' ')}
+                        fill={decoration.color}
+                        opacity="0.8"
+                        transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
+                        style={{
+                          filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                        }}
+                      />
+                    )
+                  } else if (decoration.type === 'square') {
+                    return (
+                      <rect
+                        key={idx}
+                        x={decoration.x - decoration.size / 2}
+                        y={decoration.y - decoration.size / 2}
+                        width={decoration.size}
+                        height={decoration.size}
+                        fill={decoration.color}
+                        opacity="0.8"
+                        transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
+                        style={{
+                          filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                        }}
+                      />
+                    )
+                  } else if (decoration.type === 'crescent') {
+                    return (
+                      <g key={idx} transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}>
+                        <circle
+                          cx={decoration.x}
+                          cy={decoration.y}
+                          r={decoration.size / 2}
+                          fill={decoration.color}
+                          opacity="0.8"
+                          style={{
+                            filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                          }}
+                        />
+                        <circle
+                          cx={decoration.x + decoration.size / 5}
+                          cy={decoration.y - decoration.size / 10}
+                          r={decoration.size / 2.5}
+                          fill="#87CEEB"
+                          opacity="1"
+                        />
+                      </g>
+                    )
+                  } else if (decoration.type === 'balloon') {
+                    return (
+                      <g key={idx}>
+                        <ellipse
+                          cx={decoration.x}
+                          cy={decoration.y}
+                          rx={decoration.size / 2.5}
+                          ry={decoration.size / 2}
+                          fill={decoration.color}
+                          opacity="0.8"
+                          style={{
+                            filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                          }}
+                        />
+                        <ellipse
+                          cx={decoration.x - decoration.size / 6}
+                          cy={decoration.y - decoration.size / 4}
+                          rx={decoration.size / 8}
+                          ry={decoration.size / 6}
+                          fill="white"
+                          opacity="0.6"
+                        />
+                        <line
+                          x1={decoration.x}
+                          y1={decoration.y + decoration.size / 2}
+                          x2={decoration.x}
+                          y2={decoration.y + decoration.size}
+                          stroke={decoration.color}
+                          strokeWidth="1"
+                          opacity="0.6"
+                        />
+                      </g>
+                    )
+                  } else if (decoration.type === 'bell') {
+                    return (
+                      <g key={idx} transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}>
+                        <path
+                          d={`M ${decoration.x - decoration.size / 3} ${decoration.y - decoration.size / 4} 
+                              Q ${decoration.x - decoration.size / 2} ${decoration.y} ${decoration.x - decoration.size / 3} ${decoration.y + decoration.size / 3}
+                              L ${decoration.x + decoration.size / 3} ${decoration.y + decoration.size / 3}
+                              Q ${decoration.x + decoration.size / 2} ${decoration.y} ${decoration.x + decoration.size / 3} ${decoration.y - decoration.size / 4}
+                              L ${decoration.x - decoration.size / 3} ${decoration.y - decoration.size / 4} Z`}
+                          fill={decoration.color}
+                          opacity="0.8"
+                          style={{
+                            filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                          }}
+                        />
+                        <circle
+                          cx={decoration.x}
+                          cy={decoration.y + decoration.size / 2}
+                          r={decoration.size / 8}
+                          fill={decoration.color}
+                          opacity="0.9"
+                        />
+                      </g>
+                    )
+                  } else if (decoration.type === 'snowflake') {
+                    return (
+                      <g key={idx} transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}>
+                        {[0, 60, 120, 180, 240, 300].map((angle, i) => {
+                          const rad = (angle * Math.PI) / 180
+                          const x1 = decoration.x
+                          const y1 = decoration.y
+                          const x2 = decoration.x + Math.cos(rad) * decoration.size / 2
+                          const y2 = decoration.y + Math.sin(rad) * decoration.size / 2
+                          return (
+                            <g key={i}>
+                              <line
+                                x1={x1}
+                                y1={y1}
+                                x2={x2}
+                                y2={y2}
+                                stroke={decoration.color}
+                                strokeWidth="2"
+                                opacity="0.8"
+                              />
+                              <line
+                                x1={x2 - Math.cos(rad + Math.PI / 4) * decoration.size / 6}
+                                y1={y2 - Math.sin(rad + Math.PI / 4) * decoration.size / 6}
+                                x2={x2}
+                                y2={y2}
+                                stroke={decoration.color}
+                                strokeWidth="2"
+                                opacity="0.8"
+                              />
+                              <line
+                                x1={x2 - Math.cos(rad - Math.PI / 4) * decoration.size / 6}
+                                y1={y2 - Math.sin(rad - Math.PI / 4) * decoration.size / 6}
+                                x2={x2}
+                                y2={y2}
+                                stroke={decoration.color}
+                                strokeWidth="2"
+                                opacity="0.8"
+                              />
+                            </g>
+                          )
+                        })}
+                      </g>
+                    )
+                  } else if (decoration.type === 'bow') {
+                    return (
+                      <g key={idx} transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}>
+                        <ellipse
+                          cx={decoration.x - decoration.size / 4}
+                          cy={decoration.y}
+                          rx={decoration.size / 3}
+                          ry={decoration.size / 2}
+                          fill={decoration.color}
+                          opacity="0.8"
+                          style={{
+                            filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                          }}
+                        />
+                        <ellipse
+                          cx={decoration.x + decoration.size / 4}
+                          cy={decoration.y}
+                          rx={decoration.size / 3}
+                          ry={decoration.size / 2}
+                          fill={decoration.color}
+                          opacity="0.8"
+                        />
+                        <circle
+                          cx={decoration.x}
+                          cy={decoration.y}
+                          r={decoration.size / 6}
+                          fill={decoration.color}
+                          opacity="0.9"
+                        />
+                      </g>
+                    )
+                  } else if (decoration.type === 'candycane') {
+                    return (
+                      <g key={idx} transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}>
+                        <path
+                          d={`M ${decoration.x - decoration.size / 4} ${decoration.y - decoration.size / 2}
+                              Q ${decoration.x + decoration.size / 4} ${decoration.y - decoration.size / 2} ${decoration.x + decoration.size / 4} ${decoration.y - decoration.size / 4}
+                              Q ${decoration.x + decoration.size / 4} ${decoration.y} ${decoration.x} ${decoration.y}
+                              L ${decoration.x} ${decoration.y + decoration.size / 2}`}
+                          fill="none"
+                          stroke={decoration.color}
+                          strokeWidth="4"
+                          opacity="0.8"
+                          strokeLinecap="round"
+                          style={{
+                            filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                          }}
+                        />
+                      </g>
+                    )
+                  } else if (decoration.type === 'giftbox') {
+                    return (
+                      <g key={idx} transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}>
+                        <rect
+                          x={decoration.x - decoration.size / 2.5}
+                          y={decoration.y - decoration.size / 4}
+                          width={decoration.size / 1.25}
+                          height={decoration.size / 2}
+                          fill={decoration.color}
+                          opacity="0.8"
+                          style={{
+                            filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                          }}
+                        />
+                        <rect
+                          x={decoration.x - decoration.size / 10}
+                          y={decoration.y - decoration.size / 4}
+                          width={decoration.size / 5}
+                          height={decoration.size / 2}
+                          fill="white"
+                          opacity="0.6"
+                        />
+                        <rect
+                          x={decoration.x - decoration.size / 2.5}
+                          y={decoration.y - decoration.size / 10}
+                          width={decoration.size / 1.25}
+                          height={decoration.size / 5}
+                          fill="white"
+                          opacity="0.6"
+                        />
+                      </g>
+                    )
+                  } else if (decoration.type === 'flower') {
+                    return (
+                      <g key={idx} transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}>
+                        {[0, 60, 120, 180, 240, 300].map((angle, i) => {
+                          const rad = (angle * Math.PI) / 180
+                          const petalX = decoration.x + Math.cos(rad) * decoration.size / 4
+                          const petalY = decoration.y + Math.sin(rad) * decoration.size / 4
+                          return (
+                            <circle
+                              key={i}
+                              cx={petalX}
+                              cy={petalY}
+                              r={decoration.size / 5}
+                              fill={decoration.color}
+                              opacity="0.8"
+                              style={{
+                                filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                              }}
+                            />
+                          )
+                        })}
+                        <circle
+                          cx={decoration.x}
+                          cy={decoration.y}
+                          r={decoration.size / 6}
+                          fill="#fbbf24"
+                          opacity="0.9"
+                        />
+                      </g>
+                    )
+                  } else if (decoration.type === 'leaf') {
+                    return (
+                      <ellipse
+                        key={idx}
+                        cx={decoration.x}
+                        cy={decoration.y}
+                        rx={decoration.size / 4}
+                        ry={decoration.size / 2}
+                        fill={decoration.color}
+                        opacity="0.8"
+                        transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
+                        style={{
+                          filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                        }}
+                      />
+                    )
+                  } else if (decoration.type === 'butterfly') {
+                    return (
+                      <g key={idx} transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}>
+                        <ellipse
+                          cx={decoration.x - decoration.size / 4}
+                          cy={decoration.y - decoration.size / 6}
+                          rx={decoration.size / 4}
+                          ry={decoration.size / 3}
+                          fill={decoration.color}
+                          opacity="0.8"
+                          style={{
+                            filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                          }}
+                        />
+                        <ellipse
+                          cx={decoration.x + decoration.size / 4}
+                          cy={decoration.y - decoration.size / 6}
+                          rx={decoration.size / 4}
+                          ry={decoration.size / 3}
+                          fill={decoration.color}
+                          opacity="0.8"
+                        />
+                        <ellipse
+                          cx={decoration.x - decoration.size / 4}
+                          cy={decoration.y + decoration.size / 6}
+                          rx={decoration.size / 5}
+                          ry={decoration.size / 4}
+                          fill={decoration.color}
+                          opacity="0.8"
+                        />
+                        <ellipse
+                          cx={decoration.x + decoration.size / 4}
+                          cy={decoration.y + decoration.size / 6}
+                          rx={decoration.size / 5}
+                          ry={decoration.size / 4}
+                          fill={decoration.color}
+                          opacity="0.8"
+                        />
+                        <line
+                          x1={decoration.x}
+                          y1={decoration.y - decoration.size / 2}
+                          x2={decoration.x}
+                          y2={decoration.y + decoration.size / 2}
+                          stroke="#000"
+                          strokeWidth="2"
+                          opacity="0.6"
+                        />
+                      </g>
+                    )
+                  } else if (decoration.type === 'cloud') {
+                    return (
+                      <g key={idx}>
+                        <ellipse
+                          cx={decoration.x}
+                          cy={decoration.y}
+                          rx={decoration.size / 2}
+                          ry={decoration.size / 3}
+                          fill={decoration.color}
+                          opacity="0.7"
+                          style={{
+                            filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2))'
+                          }}
+                        />
+                        <circle
+                          cx={decoration.x - decoration.size / 4}
+                          cy={decoration.y - decoration.size / 6}
+                          r={decoration.size / 4}
+                          fill={decoration.color}
+                          opacity="0.7"
+                        />
+                        <circle
+                          cx={decoration.x + decoration.size / 4}
+                          cy={decoration.y - decoration.size / 6}
+                          r={decoration.size / 4}
+                          fill={decoration.color}
+                          opacity="0.7"
+                        />
+                      </g>
+                    )
+                  } else if (decoration.type === 'sun') {
+                    return (
+                      <g key={idx} transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}>
+                        <circle
+                          cx={decoration.x}
+                          cy={decoration.y}
+                          r={decoration.size / 3}
+                          fill={decoration.color}
+                          opacity="0.8"
+                          style={{
+                            filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                          }}
+                        />
+                        {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => {
+                          const rad = (angle * Math.PI) / 180
+                          const x1 = decoration.x + Math.cos(rad) * decoration.size / 3
+                          const y1 = decoration.y + Math.sin(rad) * decoration.size / 3
+                          const x2 = decoration.x + Math.cos(rad) * decoration.size / 2
+                          const y2 = decoration.y + Math.sin(rad) * decoration.size / 2
+                          return (
+                            <line
+                              key={i}
+                              x1={x1}
+                              y1={y1}
+                              x2={x2}
+                              y2={y2}
+                              stroke={decoration.color}
+                              strokeWidth="2"
+                              opacity="0.8"
+                            />
+                          )
+                        })}
+                      </g>
+                    )
+                  } else if (decoration.type === 'musicnote') {
+                    return (
+                      <g key={idx} transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}>
+                        <ellipse
+                          cx={decoration.x}
+                          cy={decoration.y + decoration.size / 4}
+                          rx={decoration.size / 4}
+                          ry={decoration.size / 5}
+                          fill={decoration.color}
+                          opacity="0.8"
+                          style={{
+                            filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                          }}
+                        />
+                        <line
+                          x1={decoration.x + decoration.size / 4}
+                          y1={decoration.y + decoration.size / 4}
+                          x2={decoration.x + decoration.size / 4}
+                          y2={decoration.y - decoration.size / 2}
+                          stroke={decoration.color}
+                          strokeWidth="2"
+                          opacity="0.8"
+                        />
+                      </g>
                     )
                   }
                   return null
