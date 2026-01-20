@@ -479,7 +479,7 @@ export default function Dashboard() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeDasharray="5,5"
-                  opacity="0.6"
+                  opacity="0.85"
                 />
                 
                 {/* Decorative objects along the string */}
@@ -492,7 +492,7 @@ export default function Dashboard() {
                           cy={decoration.y}
                           r={decoration.size / 2}
                           fill={decoration.color}
-                          opacity="0.8"
+                          opacity="0.95"
                           style={{
                             filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
                           }}
@@ -502,7 +502,7 @@ export default function Dashboard() {
                           cy={decoration.y - decoration.size / 4}
                           r={decoration.size / 6}
                           fill="white"
-                          opacity="0.5"
+                          opacity="0.85"
                         />
                       </g>
                     )
@@ -515,7 +515,7 @@ export default function Dashboard() {
                           width={decoration.size / 1.5}
                           height={decoration.size * 2}
                           fill={decoration.color}
-                          opacity="0.8"
+                          opacity="0.95"
                           rx="2"
                           style={{
                             filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
@@ -524,7 +524,7 @@ export default function Dashboard() {
                         <path
                           d={`M ${decoration.x - decoration.size / 3} ${decoration.y + decoration.size} L ${decoration.x} ${decoration.y + decoration.size * 1.5} L ${decoration.x + decoration.size / 3} ${decoration.y + decoration.size} Z`}
                           fill={decoration.color}
-                          opacity="0.8"
+                          opacity="0.95"
                         />
                       </g>
                     )
@@ -541,7 +541,7 @@ export default function Dashboard() {
                         key={idx}
                         points={points.join(' ')}
                         fill={decoration.color}
-                        opacity="0.8"
+                        opacity="0.95"
                         transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
                         style={{
                           filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
@@ -554,7 +554,7 @@ export default function Dashboard() {
                         key={idx}
                         points={`${decoration.x},${decoration.y - decoration.size / 2} ${decoration.x - decoration.size / 2},${decoration.y + decoration.size / 2} ${decoration.x + decoration.size / 2},${decoration.y + decoration.size / 2}`}
                         fill={decoration.color}
-                        opacity="0.8"
+                        opacity="0.95"
                         transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
                         style={{
                           filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
@@ -571,7 +571,7 @@ export default function Dashboard() {
                             C ${decoration.x} ${decoration.y + decoration.size / 2} ${decoration.x + decoration.size / 2} ${decoration.y + decoration.size / 6} ${decoration.x + decoration.size / 2} ${decoration.y}
                             C ${decoration.x + decoration.size / 2} ${decoration.y - decoration.size / 3} ${decoration.x} ${decoration.y} ${decoration.x} ${decoration.y + decoration.size / 4} Z`}
                         fill={decoration.color}
-                        opacity="0.8"
+                        opacity="0.95"
                         transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
                         style={{
                           filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
@@ -584,7 +584,7 @@ export default function Dashboard() {
                         key={idx}
                         points={`${decoration.x},${decoration.y - decoration.size / 2} ${decoration.x + decoration.size / 2},${decoration.y} ${decoration.x},${decoration.y + decoration.size / 2} ${decoration.x - decoration.size / 2},${decoration.y}`}
                         fill={decoration.color}
-                        opacity="0.8"
+                        opacity="0.95"
                         transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
                         style={{
                           filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
@@ -604,7 +604,7 @@ export default function Dashboard() {
                         key={idx}
                         points={hexPoints.join(' ')}
                         fill={decoration.color}
-                        opacity="0.8"
+                        opacity="0.95"
                         transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
                         style={{
                           filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
@@ -624,7 +624,7 @@ export default function Dashboard() {
                         key={idx}
                         points={pentPoints.join(' ')}
                         fill={decoration.color}
-                        opacity="0.8"
+                        opacity="0.95"
                         transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
                         style={{
                           filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
@@ -640,7 +640,7 @@ export default function Dashboard() {
                         width={decoration.size}
                         height={decoration.size}
                         fill={decoration.color}
-                        opacity="0.8"
+                        opacity="0.95"
                         transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
                         style={{
                           filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
@@ -655,7 +655,7 @@ export default function Dashboard() {
                           cy={decoration.y}
                           r={decoration.size / 2}
                           fill={decoration.color}
-                          opacity="0.8"
+                          opacity="0.95"
                           style={{
                             filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
                           }}
@@ -678,7 +678,7 @@ export default function Dashboard() {
                           rx={decoration.size / 2.5}
                           ry={decoration.size / 2}
                           fill={decoration.color}
-                          opacity="0.8"
+                          opacity="0.95"
                           style={{
                             filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
                           }}
@@ -689,7 +689,7 @@ export default function Dashboard() {
                           rx={decoration.size / 8}
                           ry={decoration.size / 6}
                           fill="white"
-                          opacity="0.6"
+                          opacity="0.85"
                         />
                         <line
                           x1={decoration.x}
@@ -698,7 +698,7 @@ export default function Dashboard() {
                           y2={decoration.y + decoration.size}
                           stroke={decoration.color}
                           strokeWidth="1"
-                          opacity="0.6"
+                          opacity="0.85"
                         />
                       </g>
                     )
@@ -712,7 +712,7 @@ export default function Dashboard() {
                               Q ${decoration.x + decoration.size / 2} ${decoration.y} ${decoration.x + decoration.size / 3} ${decoration.y - decoration.size / 4}
                               L ${decoration.x - decoration.size / 3} ${decoration.y - decoration.size / 4} Z`}
                           fill={decoration.color}
-                          opacity="0.8"
+                          opacity="0.95"
                           style={{
                             filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
                           }}
@@ -722,7 +722,7 @@ export default function Dashboard() {
                           cy={decoration.y + decoration.size / 2}
                           r={decoration.size / 8}
                           fill={decoration.color}
-                          opacity="0.9"
+                          opacity="0.95"
                         />
                       </g>
                     )
@@ -744,7 +744,7 @@ export default function Dashboard() {
                                 y2={y2}
                                 stroke={decoration.color}
                                 strokeWidth="2"
-                                opacity="0.8"
+                                opacity="0.95"
                               />
                               <line
                                 x1={x2 - Math.cos(rad + Math.PI / 4) * decoration.size / 6}
@@ -753,7 +753,7 @@ export default function Dashboard() {
                                 y2={y2}
                                 stroke={decoration.color}
                                 strokeWidth="2"
-                                opacity="0.8"
+                                opacity="0.95"
                               />
                               <line
                                 x1={x2 - Math.cos(rad - Math.PI / 4) * decoration.size / 6}
@@ -762,7 +762,7 @@ export default function Dashboard() {
                                 y2={y2}
                                 stroke={decoration.color}
                                 strokeWidth="2"
-                                opacity="0.8"
+                                opacity="0.95"
                               />
                             </g>
                           )
@@ -778,7 +778,7 @@ export default function Dashboard() {
                           rx={decoration.size / 3}
                           ry={decoration.size / 2}
                           fill={decoration.color}
-                          opacity="0.8"
+                          opacity="0.95"
                           style={{
                             filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
                           }}
@@ -789,14 +789,14 @@ export default function Dashboard() {
                           rx={decoration.size / 3}
                           ry={decoration.size / 2}
                           fill={decoration.color}
-                          opacity="0.8"
+                          opacity="0.95"
                         />
                         <circle
                           cx={decoration.x}
                           cy={decoration.y}
                           r={decoration.size / 6}
                           fill={decoration.color}
-                          opacity="0.9"
+                          opacity="0.95"
                         />
                       </g>
                     )
@@ -811,7 +811,7 @@ export default function Dashboard() {
                           fill="none"
                           stroke={decoration.color}
                           strokeWidth="4"
-                          opacity="0.8"
+                          opacity="0.95"
                           strokeLinecap="round"
                           style={{
                             filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
@@ -828,7 +828,7 @@ export default function Dashboard() {
                           width={decoration.size / 1.25}
                           height={decoration.size / 2}
                           fill={decoration.color}
-                          opacity="0.8"
+                          opacity="0.95"
                           style={{
                             filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
                           }}
@@ -839,7 +839,7 @@ export default function Dashboard() {
                           width={decoration.size / 5}
                           height={decoration.size / 2}
                           fill="white"
-                          opacity="0.6"
+                          opacity="0.85"
                         />
                         <rect
                           x={decoration.x - decoration.size / 2.5}
@@ -847,7 +847,7 @@ export default function Dashboard() {
                           width={decoration.size / 1.25}
                           height={decoration.size / 5}
                           fill="white"
-                          opacity="0.6"
+                          opacity="0.85"
                         />
                       </g>
                     )
@@ -865,7 +865,7 @@ export default function Dashboard() {
                               cy={petalY}
                               r={decoration.size / 5}
                               fill={decoration.color}
-                              opacity="0.8"
+                              opacity="0.95"
                               style={{
                                 filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
                               }}
@@ -877,7 +877,7 @@ export default function Dashboard() {
                           cy={decoration.y}
                           r={decoration.size / 6}
                           fill="#fbbf24"
-                          opacity="0.9"
+                          opacity="0.95"
                         />
                       </g>
                     )
@@ -890,7 +890,7 @@ export default function Dashboard() {
                         rx={decoration.size / 4}
                         ry={decoration.size / 2}
                         fill={decoration.color}
-                        opacity="0.8"
+                        opacity="0.95"
                         transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
                         style={{
                           filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
@@ -906,7 +906,7 @@ export default function Dashboard() {
                           rx={decoration.size / 4}
                           ry={decoration.size / 3}
                           fill={decoration.color}
-                          opacity="0.8"
+                          opacity="0.95"
                           style={{
                             filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
                           }}
@@ -917,7 +917,7 @@ export default function Dashboard() {
                           rx={decoration.size / 4}
                           ry={decoration.size / 3}
                           fill={decoration.color}
-                          opacity="0.8"
+                          opacity="0.95"
                         />
                         <ellipse
                           cx={decoration.x - decoration.size / 4}
@@ -925,7 +925,7 @@ export default function Dashboard() {
                           rx={decoration.size / 5}
                           ry={decoration.size / 4}
                           fill={decoration.color}
-                          opacity="0.8"
+                          opacity="0.95"
                         />
                         <ellipse
                           cx={decoration.x + decoration.size / 4}
@@ -933,7 +933,7 @@ export default function Dashboard() {
                           rx={decoration.size / 5}
                           ry={decoration.size / 4}
                           fill={decoration.color}
-                          opacity="0.8"
+                          opacity="0.95"
                         />
                         <line
                           x1={decoration.x}
@@ -942,7 +942,7 @@ export default function Dashboard() {
                           y2={decoration.y + decoration.size / 2}
                           stroke="#000"
                           strokeWidth="2"
-                          opacity="0.6"
+                          opacity="0.85"
                         />
                       </g>
                     )
@@ -955,7 +955,7 @@ export default function Dashboard() {
                           rx={decoration.size / 2}
                           ry={decoration.size / 3}
                           fill={decoration.color}
-                          opacity="0.7"
+                          opacity="0.95"
                           style={{
                             filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2))'
                           }}
@@ -965,14 +965,14 @@ export default function Dashboard() {
                           cy={decoration.y - decoration.size / 6}
                           r={decoration.size / 4}
                           fill={decoration.color}
-                          opacity="0.7"
+                          opacity="0.95"
                         />
                         <circle
                           cx={decoration.x + decoration.size / 4}
                           cy={decoration.y - decoration.size / 6}
                           r={decoration.size / 4}
                           fill={decoration.color}
-                          opacity="0.7"
+                          opacity="0.95"
                         />
                       </g>
                     )
@@ -984,7 +984,7 @@ export default function Dashboard() {
                           cy={decoration.y}
                           r={decoration.size / 3}
                           fill={decoration.color}
-                          opacity="0.8"
+                          opacity="0.95"
                           style={{
                             filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
                           }}
@@ -1004,7 +1004,7 @@ export default function Dashboard() {
                               y2={y2}
                               stroke={decoration.color}
                               strokeWidth="2"
-                              opacity="0.8"
+                              opacity="0.95"
                             />
                           )
                         })}
@@ -1019,7 +1019,7 @@ export default function Dashboard() {
                           rx={decoration.size / 4}
                           ry={decoration.size / 5}
                           fill={decoration.color}
-                          opacity="0.8"
+                          opacity="0.95"
                           style={{
                             filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
                           }}
@@ -1031,7 +1031,7 @@ export default function Dashboard() {
                           y2={decoration.y - decoration.size / 2}
                           stroke={decoration.color}
                           strokeWidth="2"
-                          opacity="0.8"
+                          opacity="0.95"
                         />
                       </g>
                     )
@@ -1127,7 +1127,7 @@ export default function Dashboard() {
                                 cy={decoration.y}
                                 r={decoration.size / 2}
                                 fill={decoration.color}
-                                opacity="0.6"
+                                opacity="0.85"
                                 style={{
                                   filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2))'
                                 }}
@@ -1137,7 +1137,7 @@ export default function Dashboard() {
                                 cy={decoration.y - decoration.size / 4}
                                 r={decoration.size / 6}
                                 fill="white"
-                                opacity="0.4"
+                                opacity="0.5"
                               />
                             </g>
                           )
@@ -1154,7 +1154,7 @@ export default function Dashboard() {
                               key={decorIdx}
                               points={points.join(' ')}
                               fill={decoration.color}
-                              opacity="0.6"
+                              opacity="0.85"
                               transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
                               style={{
                                 filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2))'
@@ -1171,7 +1171,7 @@ export default function Dashboard() {
                                   C ${decoration.x} ${decoration.y + decoration.size / 2} ${decoration.x + decoration.size / 2} ${decoration.y + decoration.size / 6} ${decoration.x + decoration.size / 2} ${decoration.y}
                                   C ${decoration.x + decoration.size / 2} ${decoration.y - decoration.size / 3} ${decoration.x} ${decoration.y} ${decoration.x} ${decoration.y + decoration.size / 4} Z`}
                               fill={decoration.color}
-                              opacity="0.6"
+                              opacity="0.85"
                               transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
                               style={{
                                 filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2))'
@@ -1192,7 +1192,7 @@ export default function Dashboard() {
                                     cy={petalY}
                                     r={decoration.size / 5}
                                     fill={decoration.color}
-                                    opacity="0.6"
+                                    opacity="0.85"
                                     style={{
                                       filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2))'
                                     }}
@@ -1204,7 +1204,7 @@ export default function Dashboard() {
                                 cy={decoration.y}
                                 r={decoration.size / 6}
                                 fill="#fbbf24"
-                                opacity="0.7"
+                                opacity="0.95"
                               />
                             </g>
                           )
@@ -1217,7 +1217,7 @@ export default function Dashboard() {
                                 rx={decoration.size / 4}
                                 ry={decoration.size / 3}
                                 fill={decoration.color}
-                                opacity="0.6"
+                                opacity="0.85"
                                 style={{
                                   filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2))'
                                 }}
@@ -1228,7 +1228,7 @@ export default function Dashboard() {
                                 rx={decoration.size / 4}
                                 ry={decoration.size / 3}
                                 fill={decoration.color}
-                                opacity="0.6"
+                                opacity="0.85"
                               />
                               <ellipse
                                 cx={decoration.x - decoration.size / 4}
@@ -1236,7 +1236,7 @@ export default function Dashboard() {
                                 rx={decoration.size / 5}
                                 ry={decoration.size / 4}
                                 fill={decoration.color}
-                                opacity="0.6"
+                                opacity="0.85"
                               />
                               <ellipse
                                 cx={decoration.x + decoration.size / 4}
@@ -1244,7 +1244,7 @@ export default function Dashboard() {
                                 rx={decoration.size / 5}
                                 ry={decoration.size / 4}
                                 fill={decoration.color}
-                                opacity="0.6"
+                                opacity="0.85"
                               />
                               <line
                                 x1={decoration.x}
@@ -1253,7 +1253,7 @@ export default function Dashboard() {
                                 y2={decoration.y + decoration.size / 2}
                                 stroke="#000"
                                 strokeWidth="1"
-                                opacity="0.4"
+                                opacity="0.5"
                               />
                             </g>
                           )
@@ -1266,7 +1266,7 @@ export default function Dashboard() {
                                 rx={decoration.size / 4}
                                 ry={decoration.size / 5}
                                 fill={decoration.color}
-                                opacity="0.6"
+                                opacity="0.85"
                                 style={{
                                   filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2))'
                                 }}
@@ -1278,7 +1278,7 @@ export default function Dashboard() {
                                 y2={decoration.y - decoration.size / 2}
                                 stroke={decoration.color}
                                 strokeWidth="2"
-                                opacity="0.6"
+                                opacity="0.85"
                               />
                             </g>
                           )
@@ -1300,7 +1300,7 @@ export default function Dashboard() {
                                     y2={y2}
                                     stroke={decoration.color}
                                     strokeWidth="1.5"
-                                    opacity="0.6"
+                                    opacity="0.85"
                                   />
                                 )
                               })}
