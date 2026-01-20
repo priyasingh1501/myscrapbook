@@ -352,6 +352,48 @@ export default function Dashboard() {
   }
 
 
+  // Generate decorative objects on each card
+  const getCardDecorations = (cardIndex: number, cardWidth: number, cardHeight: number) => {
+    const decorations: Array<{ type: string; x: number; y: number; color: string; size: number; rotation: number }> = []
+    
+    const decorationTypes = [
+      'circle', 'ribbon', 'star', 'triangle', 'heart', 'diamond', 'hexagon', 
+      'pentagon', 'square', 'crescent', 'balloon', 'bell', 'snowflake', 
+      'bow', 'candycane', 'giftbox', 'flower', 'leaf', 'butterfly', 
+      'cloud', 'sun', 'musicnote'
+    ]
+    
+    const decorationColors = ['#dc2626', '#2563eb', '#16a34a', '#ca8a04', '#9333ea', '#e11d48', '#0891b2', '#f59e0b', '#ec4899', '#8b5cf6']
+    
+    // Generate 2-4 decorations per card
+    const numDecorations = 2 + Math.floor(getRandomForIndex(cardIndex, 111.11) * 3) // 2-4 decorations
+    
+    for (let i = 0; i < numDecorations; i++) {
+      const decorationType = decorationTypes[Math.floor(getRandomForIndex(cardIndex, 99.99 + i * 7) * decorationTypes.length)]
+      const decorationColor = decorationColors[Math.floor(getRandomForIndex(cardIndex, 77.77 + i * 11) * decorationColors.length)]
+      
+      // Random position on card (avoiding center where text is)
+      const margin = 30
+      const x = margin + getRandomForIndex(cardIndex, 55.55 + i * 13) * (cardWidth - margin * 2)
+      const y = margin + getRandomForIndex(cardIndex, 33.33 + i * 17) * (cardHeight - margin * 2)
+      
+      // Smaller size for card decorations
+      const size = 15 + getRandomForIndex(cardIndex, 44.44 + i * 19) * 10 // 15-25px
+      const rotation = getRandomForIndex(cardIndex, 22.22 + i * 23) * 360
+      
+      decorations.push({
+        type: decorationType,
+        x: x,
+        y: y,
+        color: decorationColor,
+        size: size,
+        rotation: rotation
+      })
+    }
+    
+    return decorations
+  }
+
   // Calculate container height based on number of notes
   const calculatedCols = Math.floor(windowWidth / 350) || 3
   const cols = Math.min(calculatedCols, 5)
@@ -1052,6 +1094,217 @@ export default function Dashboard() {
                   
                   {/* Decorative Tape */}
                   {hasTape && <div className="photo-tape tape-green"></div>}
+                  
+                  {/* Card Decorations - Random decorative objects on the card */}
+                  <svg
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      pointerEvents: 'none',
+                      zIndex: 5,
+                      overflow: 'visible'
+                    }}
+                  >
+                    {(() => {
+                      const minHeight = style.minHeight ? parseInt(style.minHeight as string) : 200
+                      const decorations = getCardDecorations(index, cardWidth, minHeight)
+                      
+                      return decorations.map((decoration, decorIdx) => {
+                        if (decoration.type === 'circle') {
+                          return (
+                            <g key={decorIdx}>
+                              <circle
+                                cx={decoration.x}
+                                cy={decoration.y}
+                                r={decoration.size / 2}
+                                fill={decoration.color}
+                                opacity="0.6"
+                                style={{
+                                  filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2))'
+                                }}
+                              />
+                              <circle
+                                cx={decoration.x}
+                                cy={decoration.y - decoration.size / 4}
+                                r={decoration.size / 6}
+                                fill="white"
+                                opacity="0.4"
+                              />
+                            </g>
+                          )
+                        } else if (decoration.type === 'star') {
+                          const points = []
+                          for (let i = 0; i < 5; i++) {
+                            const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2
+                            const x = decoration.x + Math.cos(angle) * decoration.size / 2
+                            const y = decoration.y + Math.sin(angle) * decoration.size / 2
+                            points.push(`${x},${y}`)
+                          }
+                          return (
+                            <polygon
+                              key={decorIdx}
+                              points={points.join(' ')}
+                              fill={decoration.color}
+                              opacity="0.6"
+                              transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
+                              style={{
+                                filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2))'
+                              }}
+                            />
+                          )
+                        } else if (decoration.type === 'heart') {
+                          return (
+                            <path
+                              key={decorIdx}
+                              d={`M ${decoration.x} ${decoration.y + decoration.size / 4} 
+                                  C ${decoration.x} ${decoration.y} ${decoration.x - decoration.size / 2} ${decoration.y - decoration.size / 3} ${decoration.x - decoration.size / 2} ${decoration.y} 
+                                  C ${decoration.x - decoration.size / 2} ${decoration.y + decoration.size / 6} ${decoration.x} ${decoration.y + decoration.size / 2} ${decoration.x} ${decoration.y + decoration.size / 2}
+                                  C ${decoration.x} ${decoration.y + decoration.size / 2} ${decoration.x + decoration.size / 2} ${decoration.y + decoration.size / 6} ${decoration.x + decoration.size / 2} ${decoration.y}
+                                  C ${decoration.x + decoration.size / 2} ${decoration.y - decoration.size / 3} ${decoration.x} ${decoration.y} ${decoration.x} ${decoration.y + decoration.size / 4} Z`}
+                              fill={decoration.color}
+                              opacity="0.6"
+                              transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
+                              style={{
+                                filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2))'
+                              }}
+                            />
+                          )
+                        } else if (decoration.type === 'flower') {
+                          return (
+                            <g key={decorIdx} transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}>
+                              {[0, 60, 120, 180, 240, 300].map((angle, i) => {
+                                const rad = (angle * Math.PI) / 180
+                                const petalX = decoration.x + Math.cos(rad) * decoration.size / 4
+                                const petalY = decoration.y + Math.sin(rad) * decoration.size / 4
+                                return (
+                                  <circle
+                                    key={i}
+                                    cx={petalX}
+                                    cy={petalY}
+                                    r={decoration.size / 5}
+                                    fill={decoration.color}
+                                    opacity="0.6"
+                                    style={{
+                                      filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2))'
+                                    }}
+                                  />
+                                )
+                              })}
+                              <circle
+                                cx={decoration.x}
+                                cy={decoration.y}
+                                r={decoration.size / 6}
+                                fill="#fbbf24"
+                                opacity="0.7"
+                              />
+                            </g>
+                          )
+                        } else if (decoration.type === 'butterfly') {
+                          return (
+                            <g key={decorIdx} transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}>
+                              <ellipse
+                                cx={decoration.x - decoration.size / 4}
+                                cy={decoration.y - decoration.size / 6}
+                                rx={decoration.size / 4}
+                                ry={decoration.size / 3}
+                                fill={decoration.color}
+                                opacity="0.6"
+                                style={{
+                                  filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2))'
+                                }}
+                              />
+                              <ellipse
+                                cx={decoration.x + decoration.size / 4}
+                                cy={decoration.y - decoration.size / 6}
+                                rx={decoration.size / 4}
+                                ry={decoration.size / 3}
+                                fill={decoration.color}
+                                opacity="0.6"
+                              />
+                              <ellipse
+                                cx={decoration.x - decoration.size / 4}
+                                cy={decoration.y + decoration.size / 6}
+                                rx={decoration.size / 5}
+                                ry={decoration.size / 4}
+                                fill={decoration.color}
+                                opacity="0.6"
+                              />
+                              <ellipse
+                                cx={decoration.x + decoration.size / 4}
+                                cy={decoration.y + decoration.size / 6}
+                                rx={decoration.size / 5}
+                                ry={decoration.size / 4}
+                                fill={decoration.color}
+                                opacity="0.6"
+                              />
+                              <line
+                                x1={decoration.x}
+                                y1={decoration.y - decoration.size / 2}
+                                x2={decoration.x}
+                                y2={decoration.y + decoration.size / 2}
+                                stroke="#000"
+                                strokeWidth="1"
+                                opacity="0.4"
+                              />
+                            </g>
+                          )
+                        } else if (decoration.type === 'musicnote') {
+                          return (
+                            <g key={decorIdx} transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}>
+                              <ellipse
+                                cx={decoration.x}
+                                cy={decoration.y + decoration.size / 4}
+                                rx={decoration.size / 4}
+                                ry={decoration.size / 5}
+                                fill={decoration.color}
+                                opacity="0.6"
+                                style={{
+                                  filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2))'
+                                }}
+                              />
+                              <line
+                                x1={decoration.x + decoration.size / 4}
+                                y1={decoration.y + decoration.size / 4}
+                                x2={decoration.x + decoration.size / 4}
+                                y2={decoration.y - decoration.size / 2}
+                                stroke={decoration.color}
+                                strokeWidth="2"
+                                opacity="0.6"
+                              />
+                            </g>
+                          )
+                        } else if (decoration.type === 'snowflake') {
+                          return (
+                            <g key={decorIdx} transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}>
+                              {[0, 60, 120].map((angle, i) => {
+                                const rad = (angle * Math.PI) / 180
+                                const x1 = decoration.x
+                                const y1 = decoration.y
+                                const x2 = decoration.x + Math.cos(rad) * decoration.size / 2
+                                const y2 = decoration.y + Math.sin(rad) * decoration.size / 2
+                                return (
+                                  <line
+                                    key={i}
+                                    x1={x1}
+                                    y1={y1}
+                                    x2={x2}
+                                    y2={y2}
+                                    stroke={decoration.color}
+                                    strokeWidth="1.5"
+                                    opacity="0.6"
+                                  />
+                                )
+                              })}
+                            </g>
+                          )
+                        }
+                        return null
+                      })
+                    })()}
+                  </svg>
                   
                   {/* Card Content */}
                   <div className="photo-content">
