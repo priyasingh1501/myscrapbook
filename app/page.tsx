@@ -111,8 +111,6 @@ export default function Dashboard() {
 
   // Calculate position for notes without overlap, connected by string
   const getScrapbookStyle = (index: number, note: Note) => {
-    const rotations = [-2, -1, 0, 1, 2, -1.5, 1.5, -0.5, 0.5]
-    const rotation = rotations[index % rotations.length]
     const zIndex = index + 1
     
     // Determine size based on content
@@ -138,18 +136,37 @@ export default function Dashboard() {
     const cardSpacing = 350
     const rowSpacing = 400
     
-    const left = col * cardSpacing + 50
+    // Shift everything to the left to add right padding
+    const leftOffset = 20
+    const left = col * cardSpacing + 50 - leftOffset
     const top = row * rowSpacing + 50
     
+    // Get pin position to calculate rotation
+    const { pinX: relativePinX } = getPinPosition(index, width)
+    const cardCenterX = width / 2
+    const pinOffsetFromCenter = relativePinX - cardCenterX
+    
+    // Calculate rotation based on pin position - pin on left tilts right, pin on right tilts left
+    // More offset = more rotation (max ±8 degrees)
+    const rotation = (pinOffsetFromCenter / cardCenterX) * 8
+    
+    // Transform origin should be at the pin position for natural hanging effect
+    const transformOriginX = relativePinX
+    const transformOriginY = 0 // Top of card where pin is
+    
     return {
-      transform: `rotate(${rotation}deg)`,
+      transformOrigin: `${transformOriginX}px ${transformOriginY}px`,
       zIndex,
       width: `${width}px`,
       minHeight: `${minHeight}px`,
       left: `${left}px`,
       top: `${top}px`,
       position: 'absolute' as const,
-    }
+      // Store base rotation for animation
+      '--base-rotation': rotation,
+      // Add animation delay variation for each card to create natural hanging effect
+      animationDelay: `${(index % 5) * 0.2}s`,
+    } as React.CSSProperties & { '--base-rotation': number }
   }
 
   // Get random pin position for each note (consistent per note)
@@ -194,8 +211,9 @@ export default function Dashboard() {
       // Get random pin position for this card
       const { pinX: relativePinX, pinY: relativePinY } = getPinPosition(index, cardWidth)
       
-      // Calculate absolute pin position
-      const cardLeft = col * cardSpacing + 50
+      // Calculate absolute pin position (matching the left offset)
+      const leftOffset = 20
+      const cardLeft = col * cardSpacing + 50 - leftOffset
       const cardTop = row * rowSpacing + 50
       const pinX = cardLeft + relativePinX // Random position along card width
       const pinY = cardTop + relativePinY // 8px above card top
@@ -292,7 +310,7 @@ export default function Dashboard() {
             <p className="handwriting text-xl text-white/90">Share the link above to start collecting memories!</p>
           </div>
         ) : (
-          <div className="scrapbook-collage" style={{ position: 'relative', minHeight: `${containerHeight}px`, height: 'auto', paddingBottom: '100px', paddingRight: '50px' }}>
+          <div className="scrapbook-collage" style={{ position: 'relative', minHeight: `${containerHeight}px`, height: 'auto', paddingBottom: '100px', paddingRight: '100px' }}>
             {/* String connecting all notes */}
             {notes.length > 1 && (
               <svg

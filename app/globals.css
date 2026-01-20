@@ -88,12 +88,29 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease, z-index 0.3s ease;
   cursor: pointer;
+  animation: hangSway 3s ease-in-out infinite;
 }
 
 .scrapbook-photo-card:hover {
+  animation-play-state: paused;
   transform: scale(1.05) !important;
   z-index: 1000 !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes hangSway {
+  0%, 100% {
+    transform: rotate(calc(var(--base-rotation, 0) * 1deg));
+  }
+  25% {
+    transform: rotate(calc(var(--base-rotation, 0) * 1deg + 1.5deg));
+  }
+  50% {
+    transform: rotate(calc(var(--base-rotation, 0) * 1deg));
+  }
+  75% {
+    transform: rotate(calc(var(--base-rotation, 0) * 1deg - 1.5deg));
+  }
 }
 
 .photo-content {
