@@ -182,8 +182,15 @@ export default function Dashboard() {
   }
 
 
+  // Calculate container height based on number of notes
+  const calculatedCols = Math.floor(windowWidth / 350) || 3
+  const cols = Math.min(calculatedCols, 5)
+  const rowSpacing = 300
+  const totalRows = Math.ceil(notes.length / cols)
+  const containerHeight = Math.max(600, totalRows * rowSpacing + 100)
+
   return (
-    <div className="min-h-screen relative overflow-hidden book-background p-4 md:p-8">
+    <div className="min-h-screen relative overflow-y-auto book-background p-4 md:p-8">
       {/* Background Music */}
       <audio ref={audioRef} loop>
         <source src="/music.mp3" type="audio/mpeg" />
@@ -231,7 +238,7 @@ export default function Dashboard() {
             <p className="handwriting text-xl text-white/90">Share the link above to start collecting memories!</p>
           </div>
         ) : (
-          <div className="scrapbook-collage" style={{ position: 'relative', minHeight: '600px' }}>
+          <div className="scrapbook-collage" style={{ position: 'relative', minHeight: `${containerHeight}px`, height: 'auto' }}>
             {/* String connecting all notes */}
             {notes.length > 1 && (
               <svg
