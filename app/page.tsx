@@ -26,8 +26,23 @@ export default function Dashboard() {
 
   // Try to start music on page load, fallback to user interaction if autoplay is blocked
   useEffect(() => {
-    // Try to start music immediately (may fail due to autoplay policy)
-    startMusic()
+    // Reset music state on page load
+    setMusicStarted(false)
+    setMusicPlaying(true)
+    
+    // Always try to start music on page load
+    const tryStartMusic = () => {
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0
+        startMusic().catch(() => {
+          // If autoplay fails, will start on user interaction
+        })
+      }
+    }
+    
+    // Try immediately and also after a short delay to ensure audio is ready
+    setTimeout(tryStartMusic, 100)
+    setTimeout(tryStartMusic, 500)
     
     // Also set up user interaction listener as fallback
     const handleUserInteraction = () => {
@@ -51,7 +66,8 @@ export default function Dashboard() {
   const startMusic = async () => {
     if (audioRef.current) {
       try {
-        // Always try to play, even if already started (for page reloads)
+        // Reset audio to beginning and play
+        audioRef.current.currentTime = 0
         await audioRef.current.play()
         setMusicStarted(true)
         setMusicPlaying(true)

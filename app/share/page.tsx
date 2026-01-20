@@ -60,7 +60,8 @@ Priya`
   const startMusic = async () => {
     if (audioRef.current) {
       try {
-        // Always try to play, even if already started (for page reloads)
+        // Reset audio to beginning and play
+        audioRef.current.currentTime = 0
         await audioRef.current.play()
         setMusicStarted(true)
         setMusicPlaying(true)
@@ -93,6 +94,10 @@ Priya`
   }
 
   useEffect(() => {
+    // Reset music state on page load
+    setMusicStarted(false)
+    setMusicPlaying(true)
+    
     // Check if popup has been shown before
     if (typeof window !== 'undefined') {
       const popupShown = localStorage.getItem('musicPopupShown')
@@ -102,13 +107,25 @@ Priya`
       } else {
         // Popup was already shown, start animation immediately
         setIsAnimating(true)
-        // Try to start music immediately (may fail due to autoplay policy)
-        startMusic()
       }
     }
     
     // Always try to start music on page load (will work if autoplay is allowed)
-    // If it fails, it will start on first user interaction
+    // Wait a bit for audio element to be ready
+    const tryStartMusic = () => {
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0
+        startMusic().catch(() => {
+          // If autoplay fails, will start on user interaction
+        })
+      }
+    }
+    
+    // Try immediately and also after a short delay
+    setTimeout(tryStartMusic, 100)
+    setTimeout(tryStartMusic, 500)
+    
+    // Also set up user interaction listener as fallback
     const handleUserInteraction = () => {
       startMusic()
       document.removeEventListener('click', handleUserInteraction)
@@ -341,7 +358,7 @@ Priya`
               </div>
 
               {!isAnimating && !showRightPage && (
-                <div ref={buttonRef} className="mt-8 mb-8 flex justify-center flex-shrink-0">
+                <div ref={buttonRef} className="mt-8 flex justify-center flex-shrink-0" style={{ paddingBottom: '3rem', marginBottom: '3rem' }}>
                   <button
                     onClick={handleFlipPage}
                     className="px-8 py-3 rounded-lg text-white font-bold handwriting text-lg transition-all duration-300 hover:scale-105 shadow-md"
