@@ -29,7 +29,7 @@ export default function SharePage() {
   const [showPrompts, setShowPrompts] = useState(true)
   const [showRightPage, setShowRightPage] = useState(false)
   const [animatedText, setAnimatedText] = useState('')
-  const [isAnimating, setIsAnimating] = useState(true)
+  const [isAnimating, setIsAnimating] = useState(false) // Start as false, will be set to true after popup closes
   const [musicStarted, setMusicStarted] = useState(false)
   const [musicPlaying, setMusicPlaying] = useState(true)
   const [showMusicPopup, setShowMusicPopup] = useState(false)
@@ -87,6 +87,7 @@ Priya`
       localStorage.setItem('musicPopupShown', 'true')
     }
     startMusic() // Start music when popup is closed
+    setIsAnimating(true) // Start text animation when popup is closed
   }
 
   useEffect(() => {
@@ -95,8 +96,10 @@ Priya`
       const popupShown = localStorage.getItem('musicPopupShown')
       if (!popupShown) {
         setShowMusicPopup(true)
+        // Don't start animation until popup is closed
       } else {
-        // Popup was already shown, start music on first interaction
+        // Popup was already shown, start animation and music on first interaction
+        setIsAnimating(true)
         const handleUserInteraction = () => {
           startMusic()
           document.removeEventListener('click', handleUserInteraction)
@@ -331,7 +334,7 @@ Priya`
               </div>
 
               {!isAnimating && !showRightPage && (
-                <div ref={buttonRef} className="mt-8 flex justify-center flex-shrink-0">
+                <div ref={buttonRef} className="mt-8 mb-8 flex justify-center flex-shrink-0">
                   <button
                     onClick={handleFlipPage}
                     className="px-8 py-3 rounded-lg text-white font-bold handwriting text-lg transition-all duration-300 hover:scale-105 shadow-md"
