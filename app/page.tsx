@@ -326,7 +326,7 @@ export default function Dashboard() {
         'cloud', 'sun', 'musicnote'
       ]
       
-      const decorationColors = ['#dc2626', '#2563eb', '#16a34a', '#ca8a04', '#9333ea', '#e11d48', '#0891b2', '#f59e0b', '#ec4899', '#8b5cf6']
+      const decorationColors = ['#dc2626', '#2563eb', '#16a34a', '#f59e0b', '#9333ea']
       
       // Add 4 decorations per string segment (4x increase from original)
       for (let i = 0; i < 4; i++) {
@@ -369,7 +369,7 @@ export default function Dashboard() {
       'cloud', 'sun', 'musicnote'
     ]
     
-    const decorationColors = ['#dc2626', '#2563eb', '#16a34a', '#ca8a04', '#9333ea', '#e11d48', '#0891b2', '#f59e0b', '#ec4899', '#8b5cf6']
+    const decorationColors = ['#dc2626', '#2563eb', '#16a34a', '#f59e0b', '#9333ea']
     
     // Generate 8-16 decorations per card (4x increase from original)
     const numDecorations = 8 + Math.floor(getRandomForIndex(cardIndex, 111.11) * 9) // 8-16 decorations
