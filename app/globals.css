@@ -77,8 +77,10 @@ body {
   min-height: 600px;
   padding: 2rem;
   width: 100%;
+  max-width: 100%;
   height: auto;
   overflow: visible;
+  box-sizing: border-box;
 }
 
 .scrapbook-photo-card {

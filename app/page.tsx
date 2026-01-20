@@ -137,7 +137,7 @@ export default function Dashboard() {
     const rowSpacing = 400
     
     // Shift everything to the left to add right padding
-    const leftOffset = 20
+    const leftOffset = 50
     const left = col * cardSpacing + 50 - leftOffset
     const top = row * rowSpacing + 50
     
@@ -212,7 +212,7 @@ export default function Dashboard() {
       const { pinX: relativePinX, pinY: relativePinY } = getPinPosition(index, cardWidth)
       
       // Calculate absolute pin position (matching the left offset)
-      const leftOffset = 20
+      const leftOffset = 50
       const cardLeft = col * cardSpacing + 50 - leftOffset
       const cardTop = row * rowSpacing + 50
       const pinX = cardLeft + relativePinX // Random position along card width
@@ -296,8 +296,8 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto relative z-20">
         {/* Header */}
         <div className="scrapbook-header mb-8 text-center">
-          <h1 className="nostalgic text-5xl md:text-6xl font-bold text-white mb-2 drop-shadow-lg">
-            Just gratitude
+          <h1 className="nostalgic text-5xl md:text-6xl font-bold text-white mb-2 drop-shadow-lg italic">
+            Thank you so much...
           </h1>
         </div>
 
@@ -310,7 +310,7 @@ export default function Dashboard() {
             <p className="handwriting text-xl text-white/90">Share the link above to start collecting memories!</p>
           </div>
         ) : (
-          <div className="scrapbook-collage" style={{ position: 'relative', minHeight: `${containerHeight}px`, height: 'auto', paddingBottom: '100px', paddingRight: '100px' }}>
+          <div className="scrapbook-collage" style={{ position: 'relative', minHeight: `${containerHeight}px`, height: 'auto', paddingBottom: '100px', paddingRight: '150px', paddingLeft: '20px' }}>
             {/* String connecting all notes */}
             {notes.length > 1 && (
               <svg
