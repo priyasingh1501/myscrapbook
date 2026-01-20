@@ -113,16 +113,9 @@ export default function Dashboard() {
   const pastelColors = [
     '#FFF5E1', // Cream
     '#E8F4F8', // Light blue
-    '#F0E6FF', // Lavender
-    '#FFE6F2', // Pink
     '#E6F5E6', // Mint green
-    '#FFF0E6', // Peach
-    '#F0F8FF', // Alice blue
     '#FFF8E1', // Light yellow
     '#E8F5E9', // Light green
-    '#F3E5F5', // Light purple
-    '#FFEBEE', // Light red
-    '#E0F2F1', // Turquoise
   ]
 
   // Calculate position for notes without overlap, connected by string
