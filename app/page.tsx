@@ -340,7 +340,7 @@ export default function Dashboard() {
         const decorationColor = decorationColors[Math.floor(getRandomForIndex(index, 77.77 + i * 41) * decorationColors.length)]
         
         // Random size and rotation
-        const size = 23.4 + getRandomForIndex(index, 55.55 + i * 51) * 15.6 // 23.4-39px
+        const size = 32 + getRandomForIndex(index, 55.55 + i * 51) * 20 // 32-52px (increased size)
         const rotation = getRandomForIndex(index, 33.33 + i * 61) * 360 // 0-360 degrees
         
         decorations.push({
@@ -384,7 +384,7 @@ export default function Dashboard() {
       const y = margin + getRandomForIndex(cardIndex, 33.33 + i * 17) * (cardHeight - margin * 2)
       
       // Smaller size for card decorations
-      const size = 15 + getRandomForIndex(cardIndex, 44.44 + i * 19) * 10 // 15-25px
+      const size = 22 + getRandomForIndex(cardIndex, 44.44 + i * 19) * 16 // 22-38px (increased size)
       const rotation = getRandomForIndex(cardIndex, 22.22 + i * 23) * 360
       
       decorations.push({
