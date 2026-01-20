@@ -32,6 +32,7 @@ export default function SharePage() {
   const [isAnimating, setIsAnimating] = useState(true)
   const [musicStarted, setMusicStarted] = useState(false)
   const [musicPlaying, setMusicPlaying] = useState(true)
+  const [showMusicPopup, setShowMusicPopup] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
   const animatedTextRef = useRef<HTMLDivElement>(null)
@@ -79,6 +80,24 @@ Priya`
       }
     }
   }
+
+  const closeMusicPopup = () => {
+    setShowMusicPopup(false)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('musicPopupShown', 'true')
+    }
+    startMusic() // Start music when popup is closed
+  }
+
+  useEffect(() => {
+    // Check if popup has been shown before
+    if (typeof window !== 'undefined') {
+      const popupShown = localStorage.getItem('musicPopupShown')
+      if (!popupShown) {
+        setShowMusicPopup(true)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     // Word-by-word animation
@@ -236,12 +255,51 @@ Priya`
         <source src="/music.ogg" type="audio/ogg" />
       </audio>
 
+      {/* Music Popup */}
+      {showMusicPopup && (
+        <div className="music-popup-overlay" onClick={closeMusicPopup}>
+          <div className="music-popup" onClick={(e) => e.stopPropagation()}>
+            <div className="music-popup-content">
+              <h3 className="nostalgic text-2xl font-bold text-gray-800 mb-4">
+                Welcome to My Scrapbook
+              </h3>
+              <p className="handwriting text-base text-gray-700 leading-relaxed mb-6">
+                You might hear Safarnama play in the background. It felt the right bg score for the scrapbook. If you would want to switch it off, there is a button that will enable you to do so.
+              </p>
+              <button
+                onClick={closeMusicPopup}
+                className="px-6 py-3 bg-amber-600 hover:bg-amber-700 rounded-lg text-white font-bold handwriting transition-all duration-300 hover:scale-105 shadow-md"
+              >
+                Got it!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Floating Clouds */}
       <div className="cloud cloud1"></div>
       <div className="cloud cloud2"></div>
       <div className="cloud cloud3"></div>
       <div className="cloud cloud4"></div>
       <div className="cloud cloud5"></div>
+
+      {/* Music Control Button - Top Right */}
+      <div className="music-control-button-share">
+        <button
+          type="button"
+          onClick={toggleMusic}
+          className="px-4 py-2 rounded-lg text-gray-800 handwriting text-sm transition-all duration-300 hover:scale-105 shadow-sm"
+          style={{ 
+            background: 'rgba(255, 255, 255, 0.9)',
+            border: '1px solid rgba(0, 0, 0, 0.1)',
+            backdropFilter: 'blur(10px)'
+          }}
+          title={musicPlaying ? 'Pause music' : 'Play music'}
+        >
+          {musicPlaying ? '🔊 Music On' : '🔇 Music Off'}
+        </button>
+      </div>
 
       {/* Book Container */}
       <div className="relative z-20 min-h-screen flex items-center justify-center py-8 px-4">
@@ -306,23 +364,6 @@ Priya`
                   <h2 className="nostalgic text-3xl md:text-4xl font-bold text-gray-800 text-center">
                     Would love to hear from you
                   </h2>
-                </div>
-                
-                {/* Music Control Button */}
-                <div className="flex justify-end mb-4 flex-shrink-0">
-                  <button
-                    type="button"
-                    onClick={toggleMusic}
-                    className="px-4 py-2 rounded-lg text-gray-700 handwriting text-sm transition-all duration-300 hover:scale-105 shadow-sm"
-                    style={{ 
-                      background: 'rgba(255, 255, 255, 0.3)',
-                      border: '1px solid rgba(0, 0, 0, 0.1)',
-                      backdropFilter: 'blur(10px)'
-                    }}
-                    title={musicPlaying ? 'Pause music' : 'Play music'}
-                  >
-                    {musicPlaying ? '🔊 Music On' : '🔇 Music Off'}
-                  </button>
                 </div>
                 
                 <form onSubmit={handleSubmit} className="flex-1 flex flex-col w-full" style={{ minHeight: 0, height: '100%' }}>
