@@ -330,7 +330,7 @@ Priya`
           <div ref={leftPageRef} className={`book-page book-page-left ${showRightPage ? 'flip-left' : ''}`}>
             <div className="page-content">
               {/* Heading */}
-              <div className="mb-6">
+              <div style={{ marginBottom: '1.92rem' }}>
                 <h1 className="nostalgic text-4xl md:text-5xl font-bold text-gray-800 text-center">
                   A chapter I'll always carry
                 </h1>
