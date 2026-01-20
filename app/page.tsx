@@ -1,17 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Note } from '@/lib/db'
 
 export default function Dashboard() {
   const [notes, setNotes] = useState<Note[]>([])
   const [loading, setLoading] = useState(true)
-  const [shareLink, setShareLink] = useState('')
   const [windowWidth, setWindowWidth] = useState(1200)
+  const [musicStarted, setMusicStarted] = useState(false)
+  const [musicPlaying, setMusicPlaying] = useState(true)
+  const audioRef = useRef<HTMLAudioElement>(null)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setShareLink(`${window.location.origin}/share`)
       setWindowWidth(window.innerWidth)
       fetchNotes()
       
@@ -23,6 +24,51 @@ export default function Dashboard() {
     }
   }, [])
 
+  // Start music on user interaction
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      startMusic()
+      document.removeEventListener('click', handleUserInteraction)
+      document.removeEventListener('touchstart', handleUserInteraction)
+      document.removeEventListener('keydown', handleUserInteraction)
+    }
+
+    document.addEventListener('click', handleUserInteraction)
+    document.addEventListener('touchstart', handleUserInteraction)
+    document.addEventListener('keydown', handleUserInteraction)
+
+    return () => {
+      document.removeEventListener('click', handleUserInteraction)
+      document.removeEventListener('touchstart', handleUserInteraction)
+      document.removeEventListener('keydown', handleUserInteraction)
+    }
+  }, [])
+
+  const startMusic = async () => {
+    if (audioRef.current && !musicStarted) {
+      try {
+        await audioRef.current.play()
+        setMusicStarted(true)
+        setMusicPlaying(true)
+      } catch (err) {
+        console.log('Audio play failed:', err)
+        setMusicPlaying(false)
+      }
+    }
+  }
+
+  const toggleMusic = () => {
+    if (audioRef.current) {
+      if (musicPlaying) {
+        audioRef.current.pause()
+        setMusicPlaying(false)
+      } else {
+        audioRef.current.play()
+        setMusicPlaying(true)
+      }
+    }
+  }
+
   const fetchNotes = async () => {
     try {
       const response = await fetch('/api/notes')
@@ -33,14 +79,6 @@ export default function Dashboard() {
     } finally {
       setLoading(false)
     }
-  }
-
-  const [copied, setCopied] = useState(false)
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(shareLink)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
   }
 
   // Calculate random rotation and position for scrapbook effect
@@ -85,51 +123,52 @@ export default function Dashboard() {
 
 
   return (
-    <div className="scrapbook-dashboard min-h-screen p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen relative overflow-hidden book-background p-4 md:p-8">
+      {/* Background Music */}
+      <audio ref={audioRef} loop>
+        <source src="/music.mp3" type="audio/mpeg" />
+        <source src="/music.ogg" type="audio/ogg" />
+      </audio>
+
+      {/* Floating Clouds */}
+      <div className="cloud cloud1"></div>
+      <div className="cloud cloud2"></div>
+      <div className="cloud cloud3"></div>
+      <div className="cloud cloud4"></div>
+      <div className="cloud cloud5"></div>
+
+      {/* Music Control Button - Top Right */}
+      <div className="music-control-button">
+        <button
+          type="button"
+          onClick={toggleMusic}
+          className="px-4 py-2 rounded-lg text-gray-800 handwriting text-sm transition-all duration-300 hover:scale-105 shadow-sm"
+          style={{ 
+            background: 'rgba(255, 255, 255, 0.9)',
+            border: '1px solid rgba(0, 0, 0, 0.1)',
+            backdropFilter: 'blur(10px)'
+          }}
+          title={musicPlaying ? 'Pause music' : 'Play music'}
+        >
+          {musicPlaying ? '🔊 Music On' : '🔇 Music Off'}
+        </button>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-20">
         {/* Header */}
         <div className="scrapbook-header mb-8 text-center">
-          <h1 className="nostalgic text-5xl md:text-6xl font-bold text-gray-800 mb-2 drop-shadow-sm">
-            My Digital Scrapbook
+          <h1 className="nostalgic text-5xl md:text-6xl font-bold text-white mb-2 drop-shadow-lg">
+            Just gratitude
           </h1>
-          <p className="handwriting text-lg md:text-xl text-gray-700 mb-6">
-            Memories & Moments from Amazing People
-          </p>
-          
-          {/* Share Link Section */}
-          <div className="scrapbook-share-box inline-block p-6 max-w-2xl mx-auto relative">
-            <div className="paperclip-decoration"></div>
-            <p className="handwriting text-base text-gray-800 mb-3">Share this link with your colleagues:</p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="text"
-                value={shareLink}
-                readOnly
-                className="flex-1 px-4 py-3 rounded-lg bg-white/90 text-gray-800 placeholder-gray-500 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-600 handwriting"
-              />
-              <button
-                onClick={copyToClipboard}
-                className="px-6 py-3 bg-amber-600 hover:bg-amber-700 rounded-lg text-white font-bold handwriting transition-all duration-300 hover:scale-105 flex items-center gap-2 shadow-md"
-              >
-                {copied ? (
-                  <>
-                    <span>✓</span> Copied!
-                  </>
-                ) : (
-                  'Copy Link'
-                )}
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Scrapbook Collage */}
         {loading ? (
-          <div className="text-center text-gray-700 handwriting text-2xl">Loading memories...</div>
+          <div className="text-center text-white handwriting text-2xl">Loading memories...</div>
         ) : notes.length === 0 ? (
           <div className="scrapbook-empty text-center p-12">
-            <p className="nostalgic text-3xl text-gray-800 mb-4">No memories yet...</p>
-            <p className="handwriting text-xl text-gray-700">Share the link above to start collecting memories!</p>
+            <p className="nostalgic text-3xl text-white mb-4">No memories yet...</p>
+            <p className="handwriting text-xl text-white/90">Share the link above to start collecting memories!</p>
           </div>
         ) : (
           <div className="scrapbook-collage">

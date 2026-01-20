@@ -95,6 +95,24 @@ Priya`
       const popupShown = localStorage.getItem('musicPopupShown')
       if (!popupShown) {
         setShowMusicPopup(true)
+      } else {
+        // Popup was already shown, start music on first interaction
+        const handleUserInteraction = () => {
+          startMusic()
+          document.removeEventListener('click', handleUserInteraction)
+          document.removeEventListener('touchstart', handleUserInteraction)
+          document.removeEventListener('keydown', handleUserInteraction)
+        }
+
+        document.addEventListener('click', handleUserInteraction)
+        document.addEventListener('touchstart', handleUserInteraction)
+        document.addEventListener('keydown', handleUserInteraction)
+
+        return () => {
+          document.removeEventListener('click', handleUserInteraction)
+          document.removeEventListener('touchstart', handleUserInteraction)
+          document.removeEventListener('keydown', handleUserInteraction)
+        }
       }
     }
   }, [])
@@ -157,30 +175,7 @@ Priya`
     }
   }, [isAnimating, fullText])
 
-  // Try to start music on any user interaction
-  useEffect(() => {
-    const handleUserInteraction = () => {
-      startMusic()
-      // Remove listeners after first interaction
-      document.removeEventListener('click', handleUserInteraction)
-      document.removeEventListener('touchstart', handleUserInteraction)
-      document.removeEventListener('keydown', handleUserInteraction)
-    }
-
-    document.addEventListener('click', handleUserInteraction)
-    document.addEventListener('touchstart', handleUserInteraction)
-    document.addEventListener('keydown', handleUserInteraction)
-
-    return () => {
-      document.removeEventListener('click', handleUserInteraction)
-      document.removeEventListener('touchstart', handleUserInteraction)
-      document.removeEventListener('keydown', handleUserInteraction)
-    }
-  }, [musicStarted])
-
   const handleFlipPage = () => {
-    // Start music if not already started
-    startMusic()
     // Start the flip animation
     setShowRightPage(true)
   }
