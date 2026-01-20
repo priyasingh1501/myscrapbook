@@ -328,10 +328,10 @@ export default function Dashboard() {
       
       const decorationColors = ['#dc2626', '#2563eb', '#16a34a', '#f59e0b', '#9333ea']
       
-      // Add 4 decorations per string segment (4x increase from original)
-      for (let i = 0; i < 4; i++) {
+      // Add 2 decorations per string segment
+      for (let i = 0; i < 2; i++) {
         // Position decorations at different points along the string
-        const positionFactor = [0.25, 0.4, 0.6, 0.75][i] // Spread evenly
+        const positionFactor = i === 0 ? 0.35 : 0.65 // First at 35%, second at 65%
         const posX = prevPinX + (pinX - prevPinX) * positionFactor
         const posY = prevPinY + (pinY - prevPinY) * positionFactor + sagAmount * 0.7
         
@@ -371,8 +371,8 @@ export default function Dashboard() {
     
     const decorationColors = ['#dc2626', '#2563eb', '#16a34a', '#f59e0b', '#9333ea']
     
-    // Generate 8-16 decorations per card (4x increase from original)
-    const numDecorations = 8 + Math.floor(getRandomForIndex(cardIndex, 111.11) * 9) // 8-16 decorations
+    // Generate 4-8 decorations per card
+    const numDecorations = 4 + Math.floor(getRandomForIndex(cardIndex, 111.11) * 5) // 4-8 decorations
     
     for (let i = 0; i < numDecorations; i++) {
       const decorationType = decorationTypes[Math.floor(getRandomForIndex(cardIndex, 99.99 + i * 7) * decorationTypes.length)]
