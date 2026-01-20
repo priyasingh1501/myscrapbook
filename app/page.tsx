@@ -111,11 +111,11 @@ export default function Dashboard() {
 
   // Pastel color palette for cards
   const pastelColors = [
-    '#FFF5E1', // Cream
-    '#E8F4F8', // Light blue
-    '#E6F5E6', // Mint green
-    '#FFF8E1', // Light yellow
-    '#E8F5E9', // Light green
+    '#FFFFFF', // White
+    '#FFFFFF', // White
+    '#FFFFFF', // White
+    '#FFFFFF', // White
+    '#FFFFFF', // White
   ]
 
   // Calculate position for notes without overlap, connected by string
@@ -330,7 +330,7 @@ export default function Dashboard() {
       const decorationColor = decorationColors[Math.floor(getRandomForIndex(index, 77.77) * decorationColors.length)]
       
       // Random size and rotation
-      const size = 15.6 + getRandomForIndex(index, 55.55) * 10.4 // 15.6-26px (30% bigger)
+      const size = 23.4 + getRandomForIndex(index, 55.55) * 15.6 // 23.4-39px (95% bigger than original)
       const rotation = getRandomForIndex(index, 33.33) * 360 // 0-360 degrees
       
       decorations.push({
