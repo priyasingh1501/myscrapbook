@@ -102,9 +102,9 @@ export default function Dashboard() {
     }
   }
 
-  // Calculate random rotation and position for scrapbook effect
+  // Calculate position for notes without overlap, connected by string
   const getScrapbookStyle = (index: number, note: Note) => {
-    const rotations = [-3, -2, -1, 0, 1, 2, 3, -4, 4, -1.5, 1.5]
+    const rotations = [-2, -1, 0, 1, 2, -1.5, 1.5, -0.5, 0.5]
     const rotation = rotations[index % rotations.length]
     const zIndex = index + 1
     
@@ -121,26 +121,64 @@ export default function Dashboard() {
       minHeight = 250
     }
     
-    // Calculate position for collage layout - maximum 5 notes per row
+    // Calculate position for grid layout - maximum 5 notes per row, no overlap
     const calculatedCols = Math.floor(windowWidth / 350) || 3
     const cols = Math.min(calculatedCols, 5) // Cap at 5 columns
     const col = index % cols
     const row = Math.floor(index / cols)
     
-    const leftOffset = (index % 3) * 50 - 50 // Overlap effect
-    const topOffset = (index % 4) * 40 - 40
+    // Spacing between notes (no overlap)
+    const cardSpacing = 350
+    const rowSpacing = 300
     
-    const left = `${col * 320 + leftOffset + 50}px`
-    const top = `${row * 280 + topOffset + 50}px`
+    const left = col * cardSpacing + 50
+    const top = row * rowSpacing + 50
     
     return {
       transform: `rotate(${rotation}deg)`,
       zIndex,
       width: `${width}px`,
       minHeight: `${minHeight}px`,
-      left,
-      top,
+      left: `${left}px`,
+      top: `${top}px`,
+      position: 'absolute' as const,
     }
+  }
+
+  // Calculate string path connecting all notes (connects to top center where pin would be)
+  const getStringPath = () => {
+    if (notes.length === 0) return ''
+    
+    const calculatedCols = Math.floor(windowWidth / 350) || 3
+    const cols = Math.min(calculatedCols, 5)
+    const cardSpacing = 350
+    const rowSpacing = 300
+    
+    let path = ''
+    notes.forEach((note, index) => {
+      const col = index % cols
+      const row = Math.floor(index / cols)
+      
+      // Determine card width based on content
+      const messageLength = note.message.length
+      let cardWidth = 280
+      if (messageLength > 600) {
+        cardWidth = 380
+      } else if (messageLength > 300) {
+        cardWidth = 320
+      }
+      
+      const x = col * cardSpacing + 50 + (cardWidth / 2) // Top center of card
+      const y = row * rowSpacing + 50 + 20 // Top of card (where pin would be)
+      
+      if (index === 0) {
+        path += `M ${x} ${y}`
+      } else {
+        path += ` L ${x} ${y}`
+      }
+    })
+    
+    return path
   }
 
 
@@ -193,7 +231,33 @@ export default function Dashboard() {
             <p className="handwriting text-xl text-white/90">Share the link above to start collecting memories!</p>
           </div>
         ) : (
-          <div className="scrapbook-collage">
+          <div className="scrapbook-collage" style={{ position: 'relative', minHeight: '600px' }}>
+            {/* String connecting all notes */}
+            {notes.length > 1 && (
+              <svg
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  zIndex: 1,
+                  pointerEvents: 'none',
+                }}
+              >
+                <path
+                  d={getStringPath()}
+                  fill="none"
+                  stroke="#8B4513"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeDasharray="5,5"
+                  opacity="0.6"
+                />
+              </svg>
+            )}
+            
             {notes.map((note, index) => {
               const style = getScrapbookStyle(index, note)
               const hasPin = index % 3 === 0
