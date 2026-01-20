@@ -330,7 +330,7 @@ export default function Dashboard() {
       const decorationColor = decorationColors[Math.floor(getRandomForIndex(index, 77.77) * decorationColors.length)]
       
       // Random size and rotation
-      const size = 12 + getRandomForIndex(index, 55.55) * 8 // 12-20px
+      const size = 15.6 + getRandomForIndex(index, 55.55) * 10.4 // 15.6-26px (30% bigger)
       const rotation = getRandomForIndex(index, 33.33) * 360 // 0-360 degrees
       
       decorations.push({
