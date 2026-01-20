@@ -58,13 +58,15 @@ Love,
 Priya`
 
   const startMusic = async () => {
-    if (audioRef.current && !musicStarted) {
+    if (audioRef.current) {
       try {
+        // Always try to play, even if already started (for page reloads)
         await audioRef.current.play()
         setMusicStarted(true)
         setMusicPlaying(true)
       } catch (err) {
         console.log('Audio play failed:', err)
+        // If autoplay fails, music will start on user interaction
       }
     }
   }
@@ -98,25 +100,30 @@ Priya`
         setShowMusicPopup(true)
         // Don't start animation until popup is closed
       } else {
-        // Popup was already shown, start animation and music on first interaction
+        // Popup was already shown, start animation immediately
         setIsAnimating(true)
-        const handleUserInteraction = () => {
-          startMusic()
-          document.removeEventListener('click', handleUserInteraction)
-          document.removeEventListener('touchstart', handleUserInteraction)
-          document.removeEventListener('keydown', handleUserInteraction)
-        }
-
-        document.addEventListener('click', handleUserInteraction)
-        document.addEventListener('touchstart', handleUserInteraction)
-        document.addEventListener('keydown', handleUserInteraction)
-
-        return () => {
-          document.removeEventListener('click', handleUserInteraction)
-          document.removeEventListener('touchstart', handleUserInteraction)
-          document.removeEventListener('keydown', handleUserInteraction)
-        }
+        // Try to start music immediately (may fail due to autoplay policy)
+        startMusic()
       }
+    }
+    
+    // Always try to start music on page load (will work if autoplay is allowed)
+    // If it fails, it will start on first user interaction
+    const handleUserInteraction = () => {
+      startMusic()
+      document.removeEventListener('click', handleUserInteraction)
+      document.removeEventListener('touchstart', handleUserInteraction)
+      document.removeEventListener('keydown', handleUserInteraction)
+    }
+
+    document.addEventListener('click', handleUserInteraction)
+    document.addEventListener('touchstart', handleUserInteraction)
+    document.addEventListener('keydown', handleUserInteraction)
+
+    return () => {
+      document.removeEventListener('click', handleUserInteraction)
+      document.removeEventListener('touchstart', handleUserInteraction)
+      document.removeEventListener('keydown', handleUserInteraction)
     }
   }, [])
 

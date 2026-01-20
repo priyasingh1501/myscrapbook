@@ -24,8 +24,12 @@ export default function Dashboard() {
     }
   }, [])
 
-  // Start music on user interaction
+  // Try to start music on page load, fallback to user interaction if autoplay is blocked
   useEffect(() => {
+    // Try to start music immediately (may fail due to autoplay policy)
+    startMusic()
+    
+    // Also set up user interaction listener as fallback
     const handleUserInteraction = () => {
       startMusic()
       document.removeEventListener('click', handleUserInteraction)
@@ -45,14 +49,15 @@ export default function Dashboard() {
   }, [])
 
   const startMusic = async () => {
-    if (audioRef.current && !musicStarted) {
+    if (audioRef.current) {
       try {
+        // Always try to play, even if already started (for page reloads)
         await audioRef.current.play()
         setMusicStarted(true)
         setMusicPlaying(true)
       } catch (err) {
         console.log('Audio play failed:', err)
-        setMusicPlaying(false)
+        // If autoplay fails, music will start on user interaction
       }
     }
   }
