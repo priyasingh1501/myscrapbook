@@ -265,6 +265,87 @@ export default function Dashboard() {
     return path
   }
 
+  // Generate decorative objects along the string between cards
+  const getStringDecorations = () => {
+    if (notes.length < 2) return []
+    
+    const calculatedCols = Math.floor(windowWidth / 350) || 3
+    const cols = Math.min(calculatedCols, 5)
+    const cardSpacing = 350
+    const rowSpacing = 400
+    
+    const decorations: Array<{ type: string; x: number; y: number; color: string; size: number; rotation: number }> = []
+    
+    notes.forEach((note, index) => {
+      if (index === 0) return // Skip first note, no decoration before it
+      
+      const col = index % cols
+      const row = Math.floor(index / cols)
+      const prevCol = (index - 1) % cols
+      const prevRow = Math.floor((index - 1) / cols)
+      
+      // Get pin positions for current and previous card
+      const messageLength = note.message.length
+      let cardWidth = 280
+      if (messageLength > 600) {
+        cardWidth = 380
+      } else if (messageLength > 300) {
+        cardWidth = 320
+      }
+      
+      const prevMessageLength = notes[index - 1].message.length
+      let prevCardWidth = 280
+      if (prevMessageLength > 600) {
+        prevCardWidth = 380
+      } else if (prevMessageLength > 300) {
+        prevCardWidth = 320
+      }
+      
+      const { pinX: relativePinX, pinY: relativePinY } = getPinPosition(index, cardWidth)
+      const { pinX: prevRelativePinX, pinY: prevRelativePinY } = getPinPosition(index - 1, prevCardWidth)
+      
+      const leftOffset = 50
+      const cardLeft = col * cardSpacing + 50 - leftOffset
+      const cardTop = row * rowSpacing + 50
+      const pinX = cardLeft + relativePinX
+      const pinY = cardTop + relativePinY
+      
+      const prevCardLeft = prevCol * cardSpacing + 50 - leftOffset
+      const prevCardTop = prevRow * rowSpacing + 50
+      const prevPinX = prevCardLeft + prevRelativePinX
+      const prevPinY = prevCardTop + prevRelativePinY
+      
+      // Calculate midpoint with sag for placement
+      const distance = Math.sqrt(Math.pow(pinX - prevPinX, 2) + Math.pow(pinY - prevPinY, 2))
+      const sagAmount = Math.min(distance * 0.15, 40)
+      const midX = (prevPinX + pinX) / 2
+      const midY = (prevPinY + pinY) / 2 + sagAmount * 0.7 // Place decoration at the sag point
+      
+      // Randomly choose decoration type
+      const decorationTypes = ['circle', 'ribbon', 'star', 'triangle']
+      const decorationType = decorationTypes[Math.floor(getRandomForIndex(index, 99.99) * decorationTypes.length)]
+      
+      // Random colors for decorations
+      const decorationColors = ['#dc2626', '#2563eb', '#16a34a', '#ca8a04', '#9333ea', '#e11d48', '#0891b2', '#f59e0b', '#ec4899', '#8b5cf6']
+      const decorationColor = decorationColors[Math.floor(getRandomForIndex(index, 77.77) * decorationColors.length)]
+      
+      // Random size and rotation
+      const size = 12 + getRandomForIndex(index, 55.55) * 8 // 12-20px
+      const rotation = getRandomForIndex(index, 33.33) * 360 // 0-360 degrees
+      
+      decorations.push({
+        type: decorationType,
+        x: midX,
+        y: midY,
+        color: decorationColor,
+        size: size,
+        rotation: rotation
+      })
+    })
+    
+    return decorations
+  }
+
 
   // Calculate container height based on number of notes
   const calculatedCols = Math.floor(windowWidth / 350) || 3
@@ -347,6 +428,89 @@ export default function Dashboard() {
                   strokeDasharray="5,5"
                   opacity="0.6"
                 />
+                
+                {/* Decorative objects along the string */}
+                {getStringDecorations().map((decoration, idx) => {
+                  if (decoration.type === 'circle') {
+                    return (
+                      <g key={idx}>
+                        <circle
+                          cx={decoration.x}
+                          cy={decoration.y}
+                          r={decoration.size / 2}
+                          fill={decoration.color}
+                          opacity="0.8"
+                          style={{
+                            filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                          }}
+                        />
+                        <circle
+                          cx={decoration.x}
+                          cy={decoration.y - decoration.size / 4}
+                          r={decoration.size / 6}
+                          fill="white"
+                          opacity="0.5"
+                        />
+                      </g>
+                    )
+                  } else if (decoration.type === 'ribbon') {
+                    return (
+                      <g key={idx} transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}>
+                        <rect
+                          x={decoration.x - decoration.size / 3}
+                          y={decoration.y - decoration.size}
+                          width={decoration.size / 1.5}
+                          height={decoration.size * 2}
+                          fill={decoration.color}
+                          opacity="0.8"
+                          rx="2"
+                          style={{
+                            filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                          }}
+                        />
+                        <path
+                          d={`M ${decoration.x - decoration.size / 3} ${decoration.y + decoration.size} L ${decoration.x} ${decoration.y + decoration.size * 1.5} L ${decoration.x + decoration.size / 3} ${decoration.y + decoration.size} Z`}
+                          fill={decoration.color}
+                          opacity="0.8"
+                        />
+                      </g>
+                    )
+                  } else if (decoration.type === 'star') {
+                    const points = []
+                    for (let i = 0; i < 5; i++) {
+                      const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2
+                      const x = decoration.x + Math.cos(angle) * decoration.size / 2
+                      const y = decoration.y + Math.sin(angle) * decoration.size / 2
+                      points.push(`${x},${y}`)
+                    }
+                    return (
+                      <polygon
+                        key={idx}
+                        points={points.join(' ')}
+                        fill={decoration.color}
+                        opacity="0.8"
+                        transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
+                        style={{
+                          filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                        }}
+                      />
+                    )
+                  } else if (decoration.type === 'triangle') {
+                    return (
+                      <polygon
+                        key={idx}
+                        points={`${decoration.x},${decoration.y - decoration.size / 2} ${decoration.x - decoration.size / 2},${decoration.y + decoration.size / 2} ${decoration.x + decoration.size / 2},${decoration.y + decoration.size / 2}`}
+                        fill={decoration.color}
+                        opacity="0.8"
+                        transform={`rotate(${decoration.rotation}, ${decoration.x}, ${decoration.y})`}
+                        style={{
+                          filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))'
+                        }}
+                      />
+                    )
+                  }
+                  return null
+                })}
               </svg>
             )}
             
