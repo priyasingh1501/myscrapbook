@@ -109,6 +109,22 @@ export default function Dashboard() {
     return x - Math.floor(x)
   }
 
+  // Pastel color palette for cards
+  const pastelColors = [
+    '#FFF5E1', // Cream
+    '#E8F4F8', // Light blue
+    '#F0E6FF', // Lavender
+    '#FFE6F2', // Pink
+    '#E6F5E6', // Mint green
+    '#FFF0E6', // Peach
+    '#F0F8FF', // Alice blue
+    '#FFF8E1', // Light yellow
+    '#E8F5E9', // Light green
+    '#F3E5F5', // Light purple
+    '#FFEBEE', // Light red
+    '#E0F2F1', // Turquoise
+  ]
+
   // Calculate position for notes without overlap, connected by string
   const getScrapbookStyle = (index: number, note: Note) => {
     const zIndex = index + 1
@@ -154,6 +170,9 @@ export default function Dashboard() {
     const transformOriginX = relativePinX
     const transformOriginY = 0 // Top of card where pin is
     
+    // Get pastel color for this card
+    const cardColor = pastelColors[index % pastelColors.length]
+    
     return {
       transformOrigin: `${transformOriginX}px ${transformOriginY}px`,
       zIndex,
@@ -162,6 +181,7 @@ export default function Dashboard() {
       left: `${left}px`,
       top: `${top}px`,
       position: 'absolute' as const,
+      backgroundColor: cardColor,
       // Store base rotation for animation
       '--base-rotation': rotation,
       // Add animation delay variation for each card to create natural hanging effect
