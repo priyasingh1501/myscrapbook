@@ -129,7 +129,7 @@ export default function Dashboard() {
     
     // Spacing between notes (no overlap)
     const cardSpacing = 350
-    const rowSpacing = 300
+    const rowSpacing = 400
     
     const left = col * cardSpacing + 50
     const top = row * rowSpacing + 50
@@ -145,16 +145,19 @@ export default function Dashboard() {
     }
   }
 
-  // Calculate string path connecting all notes (connects to top center where pin would be)
+  // Calculate string path connecting all notes with loose/sagging effect
   const getStringPath = () => {
     if (notes.length === 0) return ''
     
     const calculatedCols = Math.floor(windowWidth / 350) || 3
     const cols = Math.min(calculatedCols, 5)
     const cardSpacing = 350
-    const rowSpacing = 300
+    const rowSpacing = 400
     
     let path = ''
+    let prevPinX = 0
+    let prevPinY = 0
+    
     notes.forEach((note, index) => {
       const col = index % cols
       const row = Math.floor(index / cols)
@@ -168,13 +171,33 @@ export default function Dashboard() {
         cardWidth = 320
       }
       
-      const x = col * cardSpacing + 50 + (cardWidth / 2) // Top center of card
-      const y = row * rowSpacing + 50 + 20 // Top of card (where pin would be)
+      // Pin is positioned at top center of card (left: 50%, top: -8px)
+      // String connects at the pin location (center of pin, which is 8px above card top)
+      const pinX = col * cardSpacing + 50 + (cardWidth / 2) // Center of card (where pin is)
+      const pinY = row * rowSpacing + 50 - 8 // 8px above card top (pin center)
       
       if (index === 0) {
-        path += `M ${x} ${y}`
+        path += `M ${pinX} ${pinY}`
+        prevPinX = pinX
+        prevPinY = pinY
       } else {
-        path += ` L ${x} ${y}`
+        // Calculate distance and midpoint for sagging effect
+        const midX = (prevPinX + pinX) / 2
+        const midY = (prevPinY + pinY) / 2
+        const distance = Math.sqrt(Math.pow(pinX - prevPinX, 2) + Math.pow(pinY - prevPinY, 2))
+        
+        // Add sag - the longer the distance, the more sag (loose string effect)
+        const sagAmount = Math.min(distance * 0.15, 40) // Max 40px sag
+        const sagY = midY + sagAmount
+        
+        // Use quadratic curve to create loose/sagging effect
+        const controlX = midX
+        const controlY = sagY
+        
+        path += ` Q ${controlX} ${controlY} ${pinX} ${pinY}`
+        
+        prevPinX = pinX
+        prevPinY = pinY
       }
     })
     
@@ -185,9 +208,10 @@ export default function Dashboard() {
   // Calculate container height based on number of notes
   const calculatedCols = Math.floor(windowWidth / 350) || 3
   const cols = Math.min(calculatedCols, 5)
-  const rowSpacing = 300
+  const rowSpacing = 400
   const totalRows = Math.ceil(notes.length / cols)
-  const containerHeight = Math.max(600, totalRows * rowSpacing + 100)
+  const bottomPadding = 100
+  const containerHeight = Math.max(600, totalRows * rowSpacing + 100 + bottomPadding)
 
   return (
     <div className="min-h-screen relative overflow-y-auto book-background p-4 md:p-8">
@@ -238,7 +262,7 @@ export default function Dashboard() {
             <p className="handwriting text-xl text-white/90">Share the link above to start collecting memories!</p>
           </div>
         ) : (
-          <div className="scrapbook-collage" style={{ position: 'relative', minHeight: `${containerHeight}px`, height: 'auto' }}>
+          <div className="scrapbook-collage" style={{ position: 'relative', minHeight: `${containerHeight}px`, height: 'auto', paddingBottom: '100px' }}>
             {/* String connecting all notes */}
             {notes.length > 1 && (
               <svg
@@ -267,7 +291,6 @@ export default function Dashboard() {
             
             {notes.map((note, index) => {
               const style = getScrapbookStyle(index, note)
-              const hasPin = index % 3 === 0
               const hasTape = index % 4 === 1
               const hasPaperclip = index % 5 === 2
               
@@ -277,9 +300,8 @@ export default function Dashboard() {
                   className="scrapbook-photo-card"
                   style={style}
                 >
-                  {/* Decorative Pin */}
-                  {hasPin && <div className="photo-pin pin-red"></div>}
-                  {hasPin && index % 6 === 0 && <div className="photo-pin pin-white"></div>}
+                  {/* Decorative Pin - All notes have pins to hang from string */}
+                  <div className="photo-pin pin-red"></div>
                   
                   {/* Decorative Tape */}
                   {hasTape && <div className="photo-tape tape-green"></div>}
