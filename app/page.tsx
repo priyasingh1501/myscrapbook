@@ -121,8 +121,9 @@ export default function Dashboard() {
       minHeight = 250
     }
     
-    // Calculate position for collage layout
-    const cols = Math.floor(windowWidth / 350) || 3
+    // Calculate position for collage layout - maximum 5 notes per row
+    const calculatedCols = Math.floor(windowWidth / 350) || 3
+    const cols = Math.min(calculatedCols, 5) // Cap at 5 columns
     const col = index % cols
     const row = Math.floor(index / cols)
     
