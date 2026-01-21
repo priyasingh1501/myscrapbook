@@ -118,6 +118,46 @@ export default function Dashboard() {
     '#FFFFFF', // White
   ]
 
+  // Calculate row heights based on tallest card in each row
+  const getRowHeights = () => {
+    const calculatedCols = Math.floor(windowWidth / 350) || 3
+    const cols = Math.min(calculatedCols, 5)
+    const rowHeights: number[] = []
+    
+    notes.forEach((note, index) => {
+      const row = Math.floor(index / cols)
+      const messageLength = note.message.length
+      let minHeight = 200
+      
+      if (messageLength > 600) {
+        minHeight = 300
+      } else if (messageLength > 300) {
+        minHeight = 250
+      }
+      
+      if (!rowHeights[row] || minHeight > rowHeights[row]) {
+        rowHeights[row] = minHeight
+      }
+    })
+    
+    return rowHeights
+  }
+
+  // Calculate cumulative Y positions for each row
+  const getRowYPositions = () => {
+    const rowHeights = getRowHeights()
+    const positions: number[] = [50] // First row starts at 50
+    const extraSpacing = windowWidth < 768 ? 150 : windowWidth < 1024 ? 180 : 200
+    
+    for (let i = 1; i < rowHeights.length; i++) {
+      const previousRowHeight = rowHeights[i - 1]
+      const previousRowY = positions[i - 1]
+      positions[i] = previousRowY + previousRowHeight + extraSpacing
+    }
+    
+    return positions
+  }
+
   // Calculate position for notes without overlap, connected by string
   const getScrapbookStyle = (index: number, note: Note) => {
     const zIndex = index + 1
@@ -143,12 +183,12 @@ export default function Dashboard() {
     
     // Spacing between notes (no overlap) - responsive
     const cardSpacing = 350
-    const rowSpacing = windowWidth < 768 ? 350 : windowWidth < 1024 ? 380 : 400
+    const rowYPositions = getRowYPositions()
     
     // Shift everything to the left to add right padding
     const leftOffset = 50
     const left = col * cardSpacing + 50 - leftOffset
-    const top = row * rowSpacing + 50
+    const top = rowYPositions[row] || 50
     
     // Get pin position to calculate rotation
     const { pinX: relativePinX } = getPinPosition(index, width)
@@ -202,7 +242,7 @@ export default function Dashboard() {
     const calculatedCols = Math.floor(windowWidth / 350) || 3
     const cols = Math.min(calculatedCols, 5)
     const cardSpacing = 350
-    const rowSpacing = windowWidth < 768 ? 350 : windowWidth < 1024 ? 380 : 400
+    const rowYPositions = getRowYPositions()
     
     let path = ''
     let prevPinX = 0
@@ -227,7 +267,7 @@ export default function Dashboard() {
       // Calculate absolute pin position (matching the left offset)
       const leftOffset = 50
       const cardLeft = col * cardSpacing + 50 - leftOffset
-      const cardTop = row * rowSpacing + 50
+      const cardTop = rowYPositions[row] || 50
       const pinX = cardLeft + relativePinX // Random position along card width
       const pinY = cardTop + relativePinY // 8px above card top
       
@@ -272,7 +312,7 @@ export default function Dashboard() {
     const calculatedCols = Math.floor(windowWidth / 350) || 3
     const cols = Math.min(calculatedCols, 5)
     const cardSpacing = 350
-    const rowSpacing = windowWidth < 768 ? 350 : windowWidth < 1024 ? 380 : 400
+    const rowYPositions = getRowYPositions()
     
     const decorations: Array<{ type: string; x: number; y: number; color: string; size: number; rotation: number }> = []
     
@@ -306,12 +346,12 @@ export default function Dashboard() {
       
       const leftOffset = 50
       const cardLeft = col * cardSpacing + 50 - leftOffset
-      const cardTop = row * rowSpacing + 50
+      const cardTop = rowYPositions[row] || 50
       const pinX = cardLeft + relativePinX
       const pinY = cardTop + relativePinY
       
       const prevCardLeft = prevCol * cardSpacing + 50 - leftOffset
-      const prevCardTop = prevRow * rowSpacing + 50
+      const prevCardTop = rowYPositions[prevRow] || 50
       const prevPinX = prevCardLeft + prevRelativePinX
       const prevPinY = prevCardTop + prevRelativePinY
       
@@ -403,10 +443,13 @@ export default function Dashboard() {
   // Calculate container height based on number of notes
   const calculatedCols = Math.floor(windowWidth / 350) || 3
   const cols = Math.min(calculatedCols, 5)
-  const rowSpacing = windowWidth < 768 ? 350 : windowWidth < 1024 ? 380 : 400
+  const rowHeights = getRowHeights()
+  const rowYPositions = getRowYPositions()
   const totalRows = Math.ceil(notes.length / cols)
   const bottomPadding = 100
-  const containerHeight = Math.max(600, totalRows * rowSpacing + 100 + bottomPadding)
+  const lastRowY = rowYPositions[totalRows - 1] || 50
+  const lastRowHeight = rowHeights[totalRows - 1] || 200
+  const containerHeight = Math.max(600, lastRowY + lastRowHeight + bottomPadding)
 
   return (
     <div className="min-h-screen relative overflow-y-auto book-background p-4 md:p-8">
