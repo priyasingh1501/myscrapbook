@@ -127,16 +127,29 @@ export default function Dashboard() {
     notes.forEach((note, index) => {
       const row = Math.floor(index / cols)
       const messageLength = note.message.length
-      let minHeight = 200
       
+      // Determine card width based on content
+      let cardWidth = 280
       if (messageLength > 600) {
-        minHeight = 300
+        cardWidth = 380
       } else if (messageLength > 300) {
-        minHeight = 250
+        cardWidth = 320
       }
       
-      if (!rowHeights[row] || minHeight > rowHeights[row]) {
-        rowHeights[row] = minHeight
+      // Estimate height more accurately based on text length
+      // Assuming ~14px font size, ~22px line height, ~280-380px width
+      // Account for: padding (32px top+bottom), author (28px), date (20px), border (20px)
+      const baseHeight = 100 // For padding, author, date, borders
+      const charsPerLine = Math.floor((cardWidth - 48) / 7) // Rough estimate: 7px per char with padding
+      const estimatedLines = Math.ceil(messageLength / charsPerLine)
+      const textHeight = estimatedLines * 22 // 22px line height
+      const estimatedHeight = baseHeight + textHeight + 40 // Extra buffer
+      
+      // Use the larger of estimated height or minimum height
+      const cardHeight = Math.max(estimatedHeight, 200)
+      
+      if (!rowHeights[row] || cardHeight > rowHeights[row]) {
+        rowHeights[row] = cardHeight
       }
     })
     
@@ -147,7 +160,7 @@ export default function Dashboard() {
   const getRowYPositions = () => {
     const rowHeights = getRowHeights()
     const positions: number[] = [50] // First row starts at 50
-    const extraSpacing = windowWidth < 768 ? 150 : windowWidth < 1024 ? 180 : 200
+    const extraSpacing = windowWidth < 768 ? 100 : windowWidth < 1024 ? 120 : 150
     
     for (let i = 1; i < rowHeights.length; i++) {
       const previousRowHeight = rowHeights[i - 1]
@@ -165,15 +178,19 @@ export default function Dashboard() {
     // Determine size based on content
     const messageLength = note.message.length
     let width = 280
-    let minHeight = 200
     
     if (messageLength > 600) {
       width = 380
-      minHeight = 300
     } else if (messageLength > 300) {
       width = 320
-      minHeight = 250
     }
+    
+    // Calculate minimum height based on content (matching getRowHeights logic)
+    const baseHeight = 100
+    const charsPerLine = Math.floor((width - 48) / 7)
+    const estimatedLines = Math.ceil(messageLength / charsPerLine)
+    const textHeight = estimatedLines * 22
+    const minHeight = Math.max(baseHeight + textHeight + 40, 200)
     
     // Calculate position for grid layout - maximum 5 notes per row, no overlap
     const calculatedCols = Math.floor(windowWidth / 350) || 3
