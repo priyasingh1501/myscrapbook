@@ -457,7 +457,7 @@ export default function Dashboard() {
             <p className="handwriting text-xl text-white/90">Share the link above to start collecting memories!</p>
           </div>
         ) : (
-          <div className="scrapbook-collage" style={{ position: 'relative', minHeight: `${containerHeight}px`, height: 'auto', paddingBottom: '100px', paddingRight: '150px', paddingLeft: '20px' }}>
+          <div className="scrapbook-collage" style={{ position: 'relative', minHeight: `${containerHeight}px`, height: 'auto', paddingBottom: '100px', paddingRight: windowWidth < 768 ? '80px' : windowWidth < 1024 ? '120px' : '150px', paddingLeft: '20px' }}>
             {/* String connecting all notes */}
             {notes.length > 1 && (
               <svg
