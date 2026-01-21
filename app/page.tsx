@@ -141,9 +141,9 @@ export default function Dashboard() {
     const col = index % cols
     const row = Math.floor(index / cols)
     
-    // Spacing between notes (no overlap)
+    // Spacing between notes (no overlap) - responsive
     const cardSpacing = 350
-    const rowSpacing = 400
+    const rowSpacing = windowWidth < 768 ? 350 : windowWidth < 1024 ? 380 : 400
     
     // Shift everything to the left to add right padding
     const leftOffset = 50
@@ -202,7 +202,7 @@ export default function Dashboard() {
     const calculatedCols = Math.floor(windowWidth / 350) || 3
     const cols = Math.min(calculatedCols, 5)
     const cardSpacing = 350
-    const rowSpacing = 400
+    const rowSpacing = windowWidth < 768 ? 350 : windowWidth < 1024 ? 380 : 400
     
     let path = ''
     let prevPinX = 0
@@ -272,7 +272,7 @@ export default function Dashboard() {
     const calculatedCols = Math.floor(windowWidth / 350) || 3
     const cols = Math.min(calculatedCols, 5)
     const cardSpacing = 350
-    const rowSpacing = 400
+    const rowSpacing = windowWidth < 768 ? 350 : windowWidth < 1024 ? 380 : 400
     
     const decorations: Array<{ type: string; x: number; y: number; color: string; size: number; rotation: number }> = []
     
@@ -403,7 +403,7 @@ export default function Dashboard() {
   // Calculate container height based on number of notes
   const calculatedCols = Math.floor(windowWidth / 350) || 3
   const cols = Math.min(calculatedCols, 5)
-  const rowSpacing = 400
+  const rowSpacing = windowWidth < 768 ? 350 : windowWidth < 1024 ? 380 : 400
   const totalRows = Math.ceil(notes.length / cols)
   const bottomPadding = 100
   const containerHeight = Math.max(600, totalRows * rowSpacing + 100 + bottomPadding)
