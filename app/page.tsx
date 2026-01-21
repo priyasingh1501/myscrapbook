@@ -440,7 +440,7 @@ export default function Dashboard() {
         </button>
       </div>
 
-      <div className="max-w-7xl mx-auto relative z-20">
+      <div className="w-full mx-auto relative z-20" style={{ maxWidth: 'none' }}>
         {/* Header */}
         <div className="scrapbook-header mb-8 text-center">
           <h1 className="nostalgic text-5xl md:text-6xl font-bold text-white mb-2 drop-shadow-lg italic">
@@ -457,7 +457,7 @@ export default function Dashboard() {
             <p className="handwriting text-xl text-white/90">Share the link above to start collecting memories!</p>
           </div>
         ) : (
-          <div className="scrapbook-collage" style={{ position: 'relative', minHeight: `${containerHeight}px`, height: 'auto', paddingBottom: '100px', paddingRight: windowWidth < 768 ? '80px' : windowWidth < 1024 ? '120px' : '150px', paddingLeft: '20px' }}>
+          <div className="scrapbook-collage" style={{ position: 'relative', minHeight: `${containerHeight}px`, height: 'auto', paddingBottom: '100px', paddingRight: windowWidth < 768 ? '120px' : windowWidth < 1024 ? '180px' : '250px', paddingLeft: '20px' }}>
             {/* String connecting all notes */}
             {notes.length > 1 && (
               <svg
